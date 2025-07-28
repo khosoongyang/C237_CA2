@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: 'c237-all.mysql.database.azure.com',
   user: 'c237admin',
   password: 'c2372025!',
-  database: 'C237_supermarket', // ✅ use your actual DB name here
+  database: 'supermarket', // ✅ use your actual DB name here
   port: 3306,
   ssl: { rejectUnauthorized: true }
 });
