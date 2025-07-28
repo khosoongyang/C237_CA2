@@ -9,6 +9,12 @@ const connection = mysql.createConnection({
   ssl: { rejectUnauthorized: true }
 });
 
+// Step 1: Import Express
+const express = require('express');
+
+// Step 2: Create the app object
+const app = express();
+
 // NO need to call connection.connect()
 
 app.get('/deleteProduct/:id', (req, res) => {
