@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
   host: 'c237-all.mysql.database.azure.com',
   user: 'c237admin',
   password: 'c2372025!',
-  database: '',
+  database: 'c237_clothingstoreapp',
   port: 3306,
   ssl: { rejectUnauthorized: true }
 });
@@ -26,8 +26,9 @@ connection.connect((err) => {
 
 // Home route
 app.get('/', (req, res) => {
-  res.send('Welcome to the app');
-  // or res.redirect('/inventory');
+  res.send(<h1>'Welcome to the app'</h1>);
+    // or res.redirect('/inventory');
+    
 });
 
 // Delete product
@@ -53,6 +54,25 @@ app.get('/register', (req, res) => {
     res.render('register', { messages: req.flash('error'), formData: req.flash('formData')[0] });
 });
 
+app.post('/addProduct', upload.single('image'), (req, res) => {
+    const { name, quantity, price} = req.body;
+    let image;
+    if (req.file) {
+        image = req.file.filename;
+    } else{
+        image = null;
+    }
+    const sql = 'INSERT INTO products (productName, quantity, price, image) VALUES (?, ?, ?, ?)';
+    connection.query(sql, [name, quantity, price, image], (error, results) => {
+        if (error) {
+            console.error("Error adding product: ", error);
+            res.status(500).send('Error adding product');
+
+        }else{
+            res.redirect('/');
+        }
+    });
+});
 
 //******** TODO: Create a middleware function validateRegistration ********//
 const validateRegistration = (req, res, next) => {
