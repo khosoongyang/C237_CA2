@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= category %> | Seam & Soul</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            background: #fff;
+            color: #111;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            /* Added for full width layout control */
+            width: 100%;
+            overflow-x: hidden; /* Prevent horizontal scroll from elements overflowing */
+        }
+        /* New container for the whole header to ensure full width */
+        .header-container {
+            width: 100%; /* Ensure it spans full width of the viewport */
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 0 5vw; /* Add symmetric horizontal padding for content alignment */
+            box-sizing: border-box; /* Include padding in element's total width */
+        }
+
+        .main-header {
+            display: flex;
+            align-items: center;
+            /* Remove padding, it's now handled by .header-container */
+            padding: 18px 0 12px 0;
+            /* background: #fff;  Moved to .header-container */
+            /* border-bottom: 1px solid #eee; Moved to .header-container */
+            gap: 36px;
+            width: 100%; /* Make main-header fill its container */
+            box-sizing: border-box;
+            justify-content: space-between; /* Distribute space between logo, nav, and right-btns */
+        }
+
+        .main-header .logo {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #111;
+            letter-spacing: -1.5px;
+            text-decoration: none;
+            background: #fff;
+            padding: 6px 24px 6px 16px;
+            border-radius: 12px;
+            /* margin-right: 24px; REMOVED - flexbox gap handles spacing */
+            border: 2.5px solid #111;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            transition: box-shadow 0.2s;
+            flex-shrink: 0; /* Prevent logo from shrinking */
+        }
+        .main-header .logo .and {
+            font-weight: 700;
+            margin-left: 5px;
+            color: #111;
+        }
+        .main-header .logo .soul {
+            font-weight: 700;
+            margin-left: 2px;
+            color: #111;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0;
+        }
+        .main-header .nav {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-grow: 1; /* Allow navigation to take available space */
+            /* Removed flex: 1; to avoid forcing it to take all space after logo */
+            justify-content: center; /* Center the nav links */
+        }
+        .main-header .nav-link {
+            color: #111;
+            font-weight: 500;
+            text-decoration: none;
+            opacity: 0.95;
+            font-size: 1.13rem;
+            padding: 4px 0;
+            border-bottom: 2.5px solid transparent;
+            transition: color 0.16s, border 0.15s;
+        }
+        .main-header .nav-link.active,
+        .main-header .nav-link:focus,
+        .main-header .nav-link:hover {
+            color: #111;
+            border-bottom: 2.5px solid #111;
+            font-weight: 700;
+        }
+        .main-header .nav-link:last-child {
+            margin-right: 0;
+        }
+        .main-header .right-btns {
+            /* margin-left: auto; REMOVED - handled by justify-content: space-between on main-header */
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+        .main-header .btn-outline {
+            background: #fff;
+            border: 2px solid #111;
+            color: #111;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1.05rem;
+            padding: 4px 20px;
+            transition: background 0.13s, color 0.13s;
+            text-decoration: none;
+        }
+        .main-header .btn-outline:hover,
+        .main-header .btn-outline:focus {
+            background: #f7f7f7;
+            color: #111;
+        }
+        .main-header .btn-black {
+            background: #111;
+            color: #fff;
+            border: 0;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.07rem;
+            padding: 6px 22px;
+            transition: background 0.13s;
+            box-shadow: 0 2px 10px 0 #0002;
+            text-decoration: none;
+        }
+        .main-header .btn-black:hover,
+        .main-header .btn-black:focus {
+            background: #333;
+            color: #fff;
+        }
+
+        /* Adjustments for the user info within right-btns */
+        .main-header .right-btns .d-inline-flex {
+            gap: 8px; /* Slightly reduce gap for tighter grouping */
+        }
+        .main-header .right-btns .btn-sm {
+            padding: 4px 10px; /* Adjust padding for small button */
+            font-size: 0.85rem; /* Smaller font for logout button */
+        }
+        .main-header .right-btns img {
+            border: 1.5px solid #ccc;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+
+        .hero {
+            background: linear-gradient(105deg, #e4f0fc 0%, #fffbe8 100%);
+            min-height: 240px;
+            width: 100%;
+            padding: 50px 0 36px 0;
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+        .hero-title {
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #111;
+            margin-bottom: 32px;
+            margin-top: 8px;
+            letter-spacing: -0.0009em;
+        }
+        .search-bar-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+            margin-top: 0;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 14px #0001;
+            border: 1.5px solid #eaeaea;
+            width: 700px;
+            position: relative;
+            padding: 0;
+        }
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1.18rem;
+            color: #222;
+            outline: none;
+            padding: 15px 18px 15px 18px;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 10px 0 0 10px;
+        }
+        .search-bar input::placeholder {
+            color: #aaa;
+            font-weight: 400;
+            letter-spacing: .01em;
+        }
+        .search-bar select {
+            border: none;
+            font-size: 1.08rem;
+            color: #222;
+            background: transparent;
+            padding: 0 12px;
+            outline: none;
+            border-left: 1.5px solid #eee;
+            height: 54px;
+        }
+        .search-bar button {
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            font-weight: 700;
+            font-size: 1.14rem;
+            width: 110px;
+            height: 54px;
+            cursor: pointer;
+            transition: background 0.12s, box-shadow 0.1s;
+        }
+        .search-bar button:hover {
+            background: #333;
+            box-shadow: 0 2px 10px #0002;
+        }
+        .hero-trending {
+            margin-top: 14px;
+            font-size: 1.07rem;
+            color: #222;
+            font-weight: 500;
+        }
+        .hero-trending span {
+            color: #888;
+            font-weight: 500;
+            margin-left: 8px;
+            font-size: 1rem;
+        }
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 55px;
+            margin: 2.4rem auto 1.65rem auto;
+            border-bottom: 2.5px solid #eee;
+            width: 80vw;
+            max-width: 900px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .category-tab-link {
+            color: #111;
+            font-weight: 600;
+            font-size: 1.22rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 10px 8px 14px 8px;
+            cursor: pointer;
+            transition: color 0.15s, border 0.15s, transform 0.14s;
+            outline: none;
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: -0.02em;
+        }
+        .category-tab-link.active {
+            color: #111;
+            border-bottom: 3px solid #111;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .shop-category-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #111;
+            margin-left: 60px;
+            margin-top: 30px;
+            margin-bottom: 25px;
+            letter-spacing: -0.02em;
+        }
+        .shop-category-grid {
+            display: flex;
+            gap: 36px;
+            justify-content: flex-start;
+            align-items: stretch;
+            flex-wrap: wrap;
+            margin-left: 60px;
+            margin-bottom: 60px;
+            padding-bottom: 16px;
+            max-width: 92vw;
+        }
+        .shop-category-card {
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 2px 16px #0001;
+            padding: 28px 30px 22px 30px;
+            min-width: 165px;
+            max-width: 210px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 1.5px solid #eee;
+            transition: box-shadow 0.19s, border 0.17s, background 0.13s, transform 0.14s;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+        .shop-category-card:hover {
+            box-shadow: 0 8px 32px #0002;
+            border: 1.5px solid #111;
+            background: #fafbff;
+            text-decoration: none;
+            transform: scale(1.045);
+        }
+        .shop-category-card img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 17px;
+            object-fit: contain;
+        }
+        .shop-category-card .cat-label {
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 2px;
+        }
+        .shop-category-card .cat-desc {
+            font-size: 0.98rem;
+            color: #757575;
+            margin-bottom: 2px;
+        }
+        .shop-category-card .cat-listings {
+            font-size: 0.99rem;
+            color: #aaa;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+        @media (max-width: 1100px) {
+            .shop-category-grid { gap: 18px; margin-left: 18px;}
+            .shop-category-title { margin-left: 18px;}
+            .category-tabs { width: 98vw;}
+        }
+        @media (max-width: 700px) {
+            .header-container { padding: 0 2vw; } /* Adjust padding for smaller screens */
+            .main-header { padding: 12px 0 8px 0; gap: 12px; } /* No horizontal padding here */
+            .shop-category-grid { gap: 10px; margin-left: 2vw;}
+            .shop-category-title { margin-left: 2vw; font-size: 1.07rem;}
+            .category-tabs { width: 100vw; gap: 22px;}
+            .main-header .nav {
+                display: none; /* Hide nav links on very small screens if desired */
+            }
+            .main-header .right-btns {
+                gap: 8px; /* Further reduce gap for small screens */
+            }
+            .main-header .logo {
+                font-size: 1.6rem; /* Adjust logo size */
+                padding: 4px 16px 4px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <div class="main-header">
+            <a class="logo" href="/">
+                Seam <span class="and">&</span><span class="soul"> Soul</span>
+            </a>
+            <nav class="nav">
+                <a class="nav-link<%= category === 'Women' ? ' active' : '' %>" href="/women">Women</a>
+                <a class="nav-link<%= category === 'Men' ? ' active' : '' %>" href="/men">Men</a>
+                <a class="nav-link<%= category === 'Kids' ? ' active' : '' %>" href="/kids">Kids</a>
+                <a class="nav-link<%= category === 'Baby' ? ' active' : '' %>" href="/baby">Baby</a>
+            </nav>
+
+            <div class="right-btns">
+                <% if (user) { %>
+                    <div class="d-inline-flex align-items-center">
+                        <% if (user.profilepic) { %>
+                            <img src="/uploads/<%= user.profilepic %>" alt="Profile" width="36" height="36">
+                        <% } else { %>
+                            <img src="https://via.placeholder.com/36" alt="Profile" width="36" height="36">
+                        <% } %>
+                        <span style="font-weight:600; margin-left: 5px;"><%= user.username %></span>
+                        <a href="/logout" class="btn btn-outline-danger btn-sm ms-2">Logout</a>
+                    </div>
+                    <a class="btn-black" href="/sell">Sell</a>
+                <% } else { %>
+                    <a class="btn-outline" href="/register">Register</a>
+                    <a class="btn-outline" href="/login">Login</a>
+                    <a class="btn-black" href="/sell">Sell</a>
+                <% } %>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-title">Whatever you need, we have it.</div>
+        <form class="search-bar-wrap" action="/search" method="get">
+            <div class="search-bar">
+                <input type="text" name="q" placeholder="Search for anything" />
+                <select name="location">
+                    <option>All of Singapore</option>
+                </select>
+                <button type="submit">Search</button>
+            </div>
+        </form>
+        <div class="hero-trending">
+            <span><b>Trending:</b> bucket hat, dress, hoodie, vintage tee, backpack</span>
+        </div>
+    </section>
+
+    <nav class="category-tabs">
+        <a class="category-tab-link<%= category === 'Women' ? ' active' : '' %>" href="/women">Women's Fashion</a>
+        <a class="category-tab-link<%= category === 'Men' ? ' active' : '' %>" href="/men">Men's Fashion</a>
+        <a class="category-tab-link<%= category === 'Kids' ? ' active' : '' %>" href="/kids">Kids' Fashion</a>
+        <a class="category-tab-link<%= category === 'Baby' ? ' active' : '' %>" href="/baby">Baby's Fashion</a>
+    </nav>
+
+    <div class="shop-category-title">Shop by category</div>
+    <div class="shop-category-grid">
+        <%
+        // Data for each category
+        const categoriesData = { // Renamed to avoid conflict with `categories` variable in app.js
+            'Women': [
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Tops', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses & sets', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3345/3345397.png', label:'Jewellery', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Bags & Wallets', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' }
+            ],
+            'Men': [
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Tops', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Bags & Wallets', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/1946/1946429.png', label:'Watches', listings:'100,000+ listings' }
+            ],
+            'Kids': [
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Tops', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses & sets', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3636/3636997.png', label:'Schoolwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Bags & Wallets', listings:'100,000+ listings' }
+            ],
+            'Baby': [
+                { icon:'https://cdn-icons-png.flaticon.com/512/135/135574.png', label:'Onesies & Bodysuits', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses & sets', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Blankets & Swaddles', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/194/194938.png', label:'Accessories', listings:'100,000+ listings' }
+            ]
+        };
+        (categoriesData[category] || []).forEach(function(item) { %>
+            <a href="#" class="shop-category-card">
+                <img src="<%= item.icon %>" alt="<%= item.label %>" />
+                <div class="cat-label"><%= item.label %></div>
+                <div class="cat-listings"><%= item.listings %></div>
+            </a>
+        <% }); %>
+    </div>
+
+</body>
+</html>

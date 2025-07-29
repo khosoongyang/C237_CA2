@@ -2,43 +2,20 @@ const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
 const session = require('express-session');
-const flash = require('connect-flash');
 const multer = require('multer');
 const fs = require('fs');
+const flash = require('connect-flash');
 
 const app = express();
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Middleware
-app.use(express.static(path.join(__dirname, 'views')));
-app.use(express.static('public'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.urlencoded({ extended: false }));
 app.use(session({
-    secret: 'your-secret-key',
+    secret: 'yourSecretKey', // Change this to a secure, random string!
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
 }));
 app.use(flash());
 
-// Multer configuration
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadDir = 'uploads/';
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-const upload = multer({ storage: storage });
-
-// MySQL connection
+// ---- MySQL Connection ---- //
 const connection = mysql.createConnection({
     host: 'c237-all.mysql.database.azure.com',
     user: 'c237admin',
@@ -47,196 +24,254 @@ const connection = mysql.createConnection({
     port: 3306,
     ssl: { rejectUnauthorized: true }
 });
-connection.connect((err) => {
+
+connection.connect(err => {
     if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
+        console.error('❌ MySQL connection failed:', err);
+        process.exit(1);
     }
-    console.log('Connected to MySQL database');
+    console.log('✅ Connected to MySQL database');
 });
 
-// Helper to get categories
-function getCategories(callback) {
-    connection.query('SELECT DISTINCT category FROM products', (err, results) => {
-        if (err) return callback(err, []);
-        const categories = results.map(row => row.category);
-        callback(null, categories);
-    });
+// Configure where to store the files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage });
+
+// ---- Middleware Setup ---- //
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+app.use(session({
+    secret: 'your_secret_here',
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Make user available to all views
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
+
+// ---- Authentication Middleware ---- //
+function requireLogin(req, res, next) {
+    if (!req.session.user) return res.redirect('/login');
+    next();
 }
 
-// Home route with search/filter and categories
+// ---- Home Page ---- //
 app.get('/', (req, res) => {
-    const search = req.query.search || '';
-    const selectedCategory = req.query.category || '';
-    let sql = 'SELECT * FROM products WHERE 1=1';
-    let params = [];
-    if (search) {
-        sql += ' AND productName LIKE ?';
-        params.push('%' + search + '%');
-    }
-    if (selectedCategory) {
-        sql += ' AND category = ?';
-        params.push(selectedCategory);
-    }
-    connection.query(sql, params, (error, products) => {
-        if (error) {
-            console.error('Database query error:', error.message);
-            return res.status(500).send('Error retrieving products: ' + error.message);
-        }
-        getCategories((err, categories) => {
-            if (err) {
-                return res.status(500).send('Error retrieving categories: ' + err.message);
-            }
-            res.render('index', {
-                products,
-                categories,
-                search,
-                selectedCategory
-            });
-        });
-    });
+    res.render('index', { categories: ['Women', 'Men', 'Baby'] });
 });
 
-// Add Product Form Page
-app.get('/addProduct', (req, res) => {
-    getCategories((err, categories) => {
-        if (err) return res.status(500).send('Error retrieving categories');
-        res.render('addProduct', { categories });
-    });
+// ---- Category Pages ---- //
+app.get('/women', (req, res) => res.render('category', { category: 'Women' }));
+app.get('/men', (req, res) => res.render('category', { category: 'Men' }));
+app.get('/baby', (req, res) => res.render('category', { category: 'Baby' }));
+
+// ---- Favorites ---- //
+app.get('/favorites', (req, res) => {
+    res.render('favorites');
 });
 
-// Add Product Logic
-app.post('/addProduct', upload.single('image'), (req, res) => {
-    const { productName, quantity, price, description, category } = req.body;
-    let image = req.file ? req.file.filename : null;
-    const sql = 'INSERT INTO products (productName, quantity, price, image, description, category) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    connection.query(sql, [productName, quantity, price, image, description, category], (error) => {
-        if (error) {
-            console.error("Error adding product: ", error);
-            res.status(500).send('Error adding product: ' + error.message);
-        } else {
-            res.redirect('/');
-        }
-    });
+// ---- Cart ---- //
+app.get('/cart', (req, res) => {
+    const cart = []; // You can enhance this with session or DB later
+    res.render('cart', { cart });
 });
 
-// Edit Product Form
-app.get('/editProduct/:id', (req, res) => {
-    const productId = req.params.id;
-    connection.query('SELECT * FROM products WHERE productId = ?', [productId], (err, result) => {
-        if (err) return res.status(500).send('Error retrieving product');
-        if (result.length === 0) return res.status(404).send('Product not found');
-        getCategories((err, categories) => {
-            if (err) return res.status(500).send('Error retrieving categories');
-            res.render('editProduct', { product: result[0], categories });
-        });
-    });
-});
-
-// Edit Product Logic
-app.post('/editProduct/:id', upload.single('image'), (req, res) => {
-    const productId = req.params.id;
-    const { productName, quantity, price, description, category, currentImage } = req.body;
-    let image = currentImage;
-    if (req.file) {
-        image = req.file.filename;
-    }
-    const sql = 'UPDATE products SET productName = ?, quantity = ?, price = ?, image = ?, description = ?, category = ? WHERE productId = ?';
-    connection.query(sql, [productName,  quantity, price, image, description, category, productId], (error) => {
-        if (error) {
-            console.error("Error updating product:", error);
-            res.status(500).send('Error updating product');
-        } else {
-            res.redirect('/');
-        }
-    });
-});
-
-// Delete Product
-app.get('/deleteProduct/:id', (req, res) => {
-    const productId = req.params.id;
-    connection.query('DELETE FROM products WHERE productId = ?', [productId], (err) => {
-        if (err) return res.status(500).send('Error deleting product');
-        res.redirect('/');
-    });
-});
-
-// Product Details Page
-app.get('/products/:id', (req, res) => {
-    const productId = req.params.id;
-    connection.query('SELECT * FROM products WHERE productId = ?', [productId], (err, result) => {
-        if (err) return res.status(500).send('Database error');
-        if (result.length === 0) return res.status(404).send('Product not found');
-        res.render('productDetail', { product: result[0] });
-    });
-});
-
-// Register Route
-app.get('/register', (req, res) => {
-    res.render('register', { messages: req.flash('error'), formData: req.flash('formData')[0] });
-});
-
-// Validate Registration Middleware
-const validateRegistration = (req, res, next) => {
-    const { username, email, password, address, contact } = req.body;
-    if (!username || !email || !password || !address || !contact) {
-        req.flash('error', 'All fields are required.');
-        req.flash('formData', req.body);
-        return res.redirect('/register');
-    }
-    if (password.length < 8) {
-        req.flash('error', 'Password should be at least 8 or more characters long');
-        req.flash('formData', req.body);
-        return res.redirect('/register');
-    }
-    next();
-};
-
-app.post('/register', validateRegistration, (req, res) => {
-    const { username, email, password, address, contact, role } = req.body;
-    const sql = 'INSERT INTO users (username, email, password, address, contact, role) VALUES (?, ?, SHA1(?), ?, ?, ?)';
-    connection.query(sql, [username, email, password, address, contact, role], (err) => {
+// ---- Product Listing ---- //
+app.get('/product', (req, res) => {
+    const sql = 'SELECT * FROM products';
+    connection.query(sql, (err, results) => {
         if (err) {
-            req.flash('error', 'Registration failed: ' + err.message);
-            req.flash('formData', req.body);
-            return res.redirect('/register');
+            console.error('Product fetch error:', err);
+            return res.status(500).send('Error retrieving products');
         }
-        req.flash('success', 'Registration successful! Please log in.');
-        res.redirect('/login');
+        res.render('product', { products: results });
     });
 });
 
-// Login Route
+// ---- User Profile ---- //
+app.get('/user', requireLogin, (req, res) => {
+    const user = req.session.user;
+    res.render('user', {
+        username: user.username,
+        email: user.email,
+        address: user.address,
+        gender: user.gender,
+        contact: user.contact,
+        profilepic: user.profilepic,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        role: user.role
+    });
+});
+
+// ---- Search ---- //
+app.get('/search', (req, res) => {
+    res.render('search-results', {
+        searchQuery: req.query.q || '',
+        categories: ['Women', 'Men', 'Baby']
+    });
+});
+app.post('/search', (req, res) => {
+    const q = req.body.q || '';
+    res.redirect(`/search?q=${encodeURIComponent(q)}`);
+});
+
+// ---- Language Selection (Optional) ---- //
+app.post('/language', (req, res) => res.redirect('back'));
+
+// ---- Register Form ----
+app.get('/register', (req, res) => {
+    res.render('register', { formData: {}, errors: [] }); // No error on GET
+});
+
+app.post('/register', upload.single('profilepic'), (req, res) => {
+    const { username, email, password, gender, address, contact, firstname, lastname, role } = req.body;
+    const profilepic = req.file ? req.file.filename : 'default.png';
+
+    // First, check if the email already exists
+    connection.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
+        if (err) {
+            console.error('Registration error:', err);
+            return res.status(500).send('Error checking user');
+        }
+        if (results.length > 0) {
+            // Email exists
+            return res.render('register', { formData: req.body, errors: ['Email already exists'] });
+        }
+
+        // If not, insert the new user
+        const sql = 'INSERT INTO users (username, email, password, gender, address, contact, firstname, lastname, role, profilepic) VALUES (?, ?, SHA1(?), ?, ?, ?, ?, ?, ?, ?)';
+        connection.query(sql, [username, email, password, gender, address, contact, firstname, lastname, role, profilepic], (err, result) => {
+            if (err) {
+                console.error('Registration error:', err);
+                return res.render('register', { formData: req.body, errors: ['Registration failed'] });
+            }
+            req.session.user = { username, email, gender, address, contact, firstname, lastname, role, profilepic };
+            res.render('register-success', { username });
+        });
+    });
+});
+
+// ---- Login ---- //
 app.get('/login', (req, res) => {
-    res.render('login', { messages: req.flash('success'), errors: req.flash('error') });
+    // If the user is already logged in, redirect them to the homepage instead of /user
+    if (req.session.user) {
+        return res.redirect('/'); // Changed from '/user' to '/'
+    }
+    res.render('login', { errors: [], messages: [] });
 });
 
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) {
-        req.flash('error', 'All fields are required.');
-        return res.redirect('/login');
-    }
     const sql = 'SELECT * FROM users WHERE email = ? AND password = SHA1(?)';
     connection.query(sql, [email, password], (err, results) => {
-        if (err) throw err;
-        if (results.length > 0) {
-            req.session.user = results[0];
-            req.flash('success', 'Login successful!');
-            res.redirect('/');
-        } else {
-            req.flash('error', 'Invalid email or password.');
-            res.redirect('/login');
+        if (err) {
+            console.error("Login database error:", err); // Add error logging for debugging
+            return res.status(500).send('Login error');
         }
+        if (results.length === 0) {
+            return res.render('login', { errors: ['Invalid email or password'], messages: [] });
+        }
+        req.session.user = results[0];
+        // After successful login, redirect to the homepage instead of /user
+        res.redirect('/'); // Changed from '/user' to '/'
     });
 });
 
-// Sell Route (redirects to addProduct)
-app.get('/sell', (req, res) => {
-    res.redirect('/addProduct');
+// ---- Logout ---- //
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => res.redirect('/login'));
 });
 
-// Start server
-app.listen(3000, () => {
-    console.log('Server running at http://localhost:3000');
+// ---- Add Product (Form) ---- //
+app.get('/addProduct', (req, res) => {
+    res.render('addProduct', {
+        errors: req.flash('errors') || [],
+        success: req.flash('success') || "",
+        formData: req.flash('formData')[0] || {}
+    });
+});
+
+
+// ---- Add Product (POST) ---- //
+app.post('/addProduct', upload.single('image'), (req, res) => {
+    const { productName, quantity, price, description } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+    const sql = 'INSERT INTO products (productName, quantity, price, image, description) VALUES (?, ?, ?, ?, ?)';
+    connection.query(sql, [productName, quantity, price, image, description], (err, result) => {
+        if (err) {
+            console.error('Add product error:', err);
+            // Clean up the uploaded file if database insertion fails
+            if (req.file) {
+                fs.unlink(req.file.path, (unlinkErr) => {
+                    if (unlinkErr) console.error('Error deleting uploaded file on DB error:', unlinkErr);
+                });
+            }
+            // Place the requested render here
+            return res.render('addProduct', {
+                errors: ['Error adding product: Please try again.'], // Example error message
+                success: "",
+                formData: req.body
+            });
+        }
+        res.redirect('/product');
+    });
+});
+
+
+// ---- Edit Product ---- //
+app.post('/editProduct/:id', upload.single('image'), (req, res) => {
+    const { productName, quantity, price, description, currentImage } = req.body;
+    const image = req.file ? req.file.filename : currentImage;
+    const productId = req.params.id;
+
+    const sql = 'UPDATE products SET productName = ?, quantity = ?, price = ?, image = ?, description = ? WHERE productId = ?';
+    connection.query(sql, [productName, quantity, price, image, description, productId], (err, result) => {
+        if (err) {
+            console.error('Edit product error:', err);
+            return res.status(500).send('Error editing product');
+        }
+        res.redirect('/product');
+    });
+});
+
+// --- GET route for the Sell Item form ---
+app.get('/sell', (req, res) => {
+    // 1. Check if the user is logged in
+    if (!req.session.user) {
+        req.flash('error', 'Please log in to sell an item.');
+        return res.redirect('/login'); // Redirect to login if not authenticated
+    }
+
+    // 2. Render the sell form (your 'sell.ejs' file)
+    res.render('sell', {
+        // Pass flash messages to the template (requires 'connect-flash' middleware)
+        messages: res.locals.messages,
+        // Pass back previously submitted form data in case of validation error
+        // The [0] is because req.flash returns an array.
+        formData: req.flash('formData')[0] || {}
+    });
+});
+
+// ---- Start Server ---- //
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🧵 Seam & Soul app running at http://localhost:${PORT}!`);
 });

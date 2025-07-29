@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Search Results | Seam & Soul</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      background: #fff;
+      color: #111;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 18px 32px 12px 32px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      gap: 36px;
+    }
+    .main-header .logo {
+      width: 50px;
+      height: 50px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/6/6f/Uniqlo_logo.svg') no-repeat center center;
+      background-size: contain;
+      margin-right: 24px;
+      cursor: pointer;
+    }
+    .main-header .nav {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      flex: 1;
+    }
+    .main-header .nav-link {
+      color: #111;
+      font-weight: 500;
+      text-decoration: none;
+      opacity: 0.95;
+      font-size: 1.13rem;
+      padding: 4px 0;
+      border-bottom: 2.5px solid transparent;
+      transition: color 0.16s, border 0.15s;
+    }
+    .main-header .nav-link.active,
+    .main-header .nav-link:focus,
+    .main-header .nav-link:hover {
+      color: #111;
+      border-bottom: 2.5px solid #111;
+      font-weight: 600;
+    }
+    .main-header .icons {
+      margin-left: auto;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .main-header .icon-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #222;
+      opacity: 0.8;
+      padding: 2px 4px;
+      margin: 0 2px;
+      transition: opacity 0.18s;
+      vertical-align: middle;
+    }
+    .main-header .icon-btn:hover {
+      opacity: 1;
+    }
+
+    /* Search bar at the top */
+    .searchbar-top {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 32px 0 0 0;
+    }
+    .searchbar-top-inner {
+      display: flex;
+      align-items: center;
+      width: 470px;
+      background: #f6f6f7;
+      border-radius: 25px;
+      padding: 4px 18px;
+      box-shadow: 0 2px 14px #0001;
+      border: 1px solid #eaeaea;
+    }
+    .searchbar-top-inner input[type="text"] {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 1.08rem;
+      color: #222;
+      outline: none;
+      padding: 10px 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .searchbar-top-inner input[type="text"]::placeholder {
+      color: #aaa;
+      font-weight: 400;
+      letter-spacing: .01em;
+    }
+    .searchbar-top-inner .search-icon {
+      color: #999;
+      font-size: 1.35rem;
+      margin-right: 8px;
+    }
+    .searchbar-top-inner button {
+      margin-left: 8px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 9px 28px;
+      font-weight: 600;
+      font-size: 1.11rem;
+      transition: background 0.16s, transform 0.15s;
+      box-shadow: 0 2px 10px 0 #0001;
+    }
+    .searchbar-top-inner button:hover {
+      background: #222;
+      transform: scale(1.08);
+    }
+
+    /* Category grid and rest unchanged */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 32px;
+      max-width: 1080px;
+      margin: 44px auto 0 auto;
+      background: #fff;
+    }
+    .category-title-col {
+      font-weight: 700;
+      font-size: 1.18rem;
+      border-bottom: 2px solid #222;
+      margin-bottom: 18px;
+      padding-bottom: 3px;
+      letter-spacing: .03em;
+      color: #222;
+    }
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.02rem;
+    }
+    .category-item img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #f6f6f6;
+      border: 1px solid #eee;
+      padding: 4px;
+    }
+    .category-label {
+      font-weight: 500;
+      color: #222;
+    }
+    .category-label.special {
+      color: #e60023;
+      font-weight: 700;
+    }
+    .category-label.gray {
+      color: #888;
+      font-size: 0.99rem;
+      font-weight: 400;
+    }
+    .category-label.blue {
+      color: #007acc;
+      font-weight: 600;
+      font-size: 1.02rem;
+    }
+    .category-label.green {
+      color: #1ebd6a;
+      font-weight: 600;
+      font-size: 1.02rem;
+    }
+    .category-label.orange {
+      color: #ff8c00;
+      font-weight: 600;
+      font-size: 1.02rem;
+    }
+    .info-section {
+      padding: 48px 0 10px 0;
+      background: #fff;
+      border-top: 1px solid #eee;
+      margin-top: 34px;
+    }
+    .info-section h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111;
+    }
+    .info-section a {
+      color: #007acc;
+      text-decoration: underline;
+      font-size: 1.01rem;
+    }
+    .from-section {
+      background: #fff;
+      padding: 0 0 44px 0;
+    }
+    @media (max-width: 1100px) {
+      .category-grid { grid-template-columns: repeat(3, 1fr); gap: 24px;}
+    }
+    @media (max-width: 800px) {
+      .category-grid { grid-template-columns: repeat(2, 1fr); gap: 14px;}
+    }
+    @media (max-width: 600px) {
+      .main-header { padding: 12px 8px 8px 8px; gap: 12px;}
+      .category-grid { grid-template-columns: 1fr; gap: 10px;}
+      .searchbar-top-inner { width: 98vw;}
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <a class="logo" href="/"></a>
+    <nav class="nav">
+      <a class="nav-link" href="/women">WOMEN</a>
+      <a class="nav-link" href="/men">MEN</a>
+      <a class="nav-link" href="/baby">BABY</a>
+    </nav>
+    <div class="icons">
+      <button class="icon-btn" title="Globe" aria-label="Language">🌐</button>
+      <button class="icon-btn" title="Favorites" aria-label="Favorites">❤</button>
+      <button class="icon-btn" title="Cart" aria-label="Cart">🛒</button>
+    </div>
+  </header>
+
+  <!-- Move searchbar to the top and make it work -->
+  <form class="searchbar-top" action="/search" method="get">
+    <div class="searchbar-top-inner">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" name="q" placeholder="Search by keyword" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" />
+      <button type="submit">Search</button>
+    </div>
+  </form>
+
+  <!-- Optionally, show results for the query -->
+  <% if (typeof searchQuery !== 'undefined' && searchQuery.trim() !== '') { %>
+    <div class="container mt-4 mb-5">
+      <h4>Showing results for "<%= searchQuery %>"</h4>
+      <div class="alert alert-info mt-2">No actual results implemented.</div>
+    </div>
+  <% } %>
+
+  <div class="category-grid">
+    <!-- Women -->
+    <div>
+      <div class="category-title-col">WOMEN</div>
+      <div class="category-list">
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_69_465287?$grid$" alt=""> <span class="category-label">T-Shirts, Bra Tops & Sweats</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_37_466425?$grid$" alt=""> <span class="category-label">Dresses & Skirts</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_68_467314?$grid$" alt=""> <span class="category-label">Maternity</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_02_465099?$grid$" alt=""> <span class="category-label">HEATTECH</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_66_466135?$grid$" alt=""> <span class="category-label">AIRism</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_21_464842?$grid$" alt=""> <span class="category-label">Special Collaborations</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_68_467314?$grid$" alt=""> <span class="category-label">New Price</span></div>
+      </div>
+    </div>
+    <!-- Men -->
+    <div>
+      <div class="category-title-col">MEN</div>
+      <div class="category-list">
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_01_464816?$grid$" alt=""> <span class="category-label">T-Shirts, Polo Shirts</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_36_466426?$grid$" alt=""> <span class="category-label">Shirts</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_85_466462?$grid$" alt=""> <span class="category-label">HEATTECH</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_34_466427?$grid$" alt=""> <span class="category-label">AIRism</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_02_465099?$grid$" alt=""> <span class="category-label">Special Collaborations</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_61_464848?$grid$" alt=""> <span class="category-label">New Price</span></div>
+      </div>
+    </div>
+    <!-- Kids (if you want to hide, remove this block) -->
+    <!--
+    <div>
+      <div class="category-title-col">KIDS</div>
+      <div class="category-list">
+        ...
+      </div>
+    </div>
+    -->
+    <!-- Baby -->
+    <div>
+      <div class="category-title-col">BABY</div>
+      <div class="category-list">
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_28_465101?$grid$" alt=""> <span class="category-label">Knitwear</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_56_465103?$grid$" alt=""> <span class="category-label">Loungewear</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_41_465104?$grid$" alt=""> <span class="category-label">Coming Soon</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_13_465105?$grid$" alt=""> <span class="category-label">Sport Utility Wear</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_22_465106?$grid$" alt=""> <span class="category-label">UT Graphic T-shirts</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_23_465107?$grid$" alt=""> <span class="category-label">Sale</span></div>
+      </div>
+    </div>
+    <!-- Others -->
+    <div>
+      <div class="category-title-col">&nbsp;</div>
+      <div class="category-list">
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_29_465108?$grid$" alt=""> <span class="category-label">Accessories</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_30_465109?$grid$" alt=""> <span class="category-label">Pre-Order</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_31_465110?$grid$" alt=""> <span class="category-label">Linen</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_32_465111?$grid$" alt=""> <span class="category-label">2025 Spring/Summer</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_33_465112?$grid$" alt=""> <span class="category-label">Extra Lengths & Sizes</span></div>
+        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_34_465113?$grid$" alt=""> <span class="category-label">Multi-buy</span></div>
+      </div>
+    </div>
+  </div>
+  <section class="info-section">
+    <div class="container">
+      <h2>Information</h2>
+      <p>
+        <a href="#">Pick up your Click and Collect Order from 25 July - 10 Aug and receive a $6 voucher off $60 to spend in store. T&amp;C applies*</a>
+      </p>
+    </div>
+  </section>
+  <section class="from-section">
+    <div class="container">
+      <h2>From Seam & Soul.</h2>
+      <!-- Placeholder for news, images, banners, etc. -->
+    </div>
+  </section>
+</body>
+</html>
