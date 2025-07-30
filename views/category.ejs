@@ -14,32 +14,25 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            /* Added for full width layout control */
             width: 100%;
-            overflow-x: hidden; /* Prevent horizontal scroll from elements overflowing */
+            overflow-x: hidden;
         }
-        /* New container for the whole header to ensure full width */
         .header-container {
-            width: 100%; /* Ensure it spans full width of the viewport */
+            width: 100%;
             background: #fff;
             border-bottom: 1px solid #eee;
-            padding: 0 5vw; /* Add symmetric horizontal padding for content alignment */
-            box-sizing: border-box; /* Include padding in element's total width */
+            padding: 0 5vw;
+            box-sizing: border-box;
         }
-
         .main-header {
             display: flex;
             align-items: center;
-            /* Remove padding, it's now handled by .header-container */
             padding: 18px 0 12px 0;
-            /* background: #fff;  Moved to .header-container */
-            /* border-bottom: 1px solid #eee; Moved to .header-container */
             gap: 36px;
-            width: 100%; /* Make main-header fill its container */
+            width: 100%;
             box-sizing: border-box;
-            justify-content: space-between; /* Distribute space between logo, nav, and right-btns */
+            justify-content: space-between;
         }
-
         .main-header .logo {
             font-size: 2.1rem;
             font-weight: 700;
@@ -49,13 +42,12 @@
             background: #fff;
             padding: 6px 24px 6px 16px;
             border-radius: 12px;
-            /* margin-right: 24px; REMOVED - flexbox gap handles spacing */
             border: 2.5px solid #111;
             font-family: 'Poppins', sans-serif;
             display: flex;
             align-items: center;
             transition: box-shadow 0.2s;
-            flex-shrink: 0; /* Prevent logo from shrinking */
+            flex-shrink: 0;
         }
         .main-header .logo .and {
             font-weight: 700;
@@ -73,9 +65,8 @@
             display: flex;
             gap: 28px;
             align-items: center;
-            flex-grow: 1; /* Allow navigation to take available space */
-            /* Removed flex: 1; to avoid forcing it to take all space after logo */
-            justify-content: center; /* Center the nav links */
+            flex-grow: 1;
+            justify-content: center;
         }
         .main-header .nav-link {
             color: #111;
@@ -98,11 +89,10 @@
             margin-right: 0;
         }
         .main-header .right-btns {
-            /* margin-left: auto; REMOVED - handled by justify-content: space-between on main-header */
             display: flex;
             gap: 12px;
             align-items: center;
-            flex-shrink: 0; /* Prevent buttons from shrinking */
+            flex-shrink: 0;
         }
         .main-header .btn-outline {
             background: #fff;
@@ -137,22 +127,18 @@
             background: #333;
             color: #fff;
         }
-
-        /* Adjustments for the user info within right-btns */
         .main-header .right-btns .d-inline-flex {
-            gap: 8px; /* Slightly reduce gap for tighter grouping */
+            gap: 8px;
         }
         .main-header .right-btns .btn-sm {
-            padding: 4px 10px; /* Adjust padding for small button */
-            font-size: 0.85rem; /* Smaller font for logout button */
+            padding: 4px 10px;
+            font-size: 0.85rem;
         }
         .main-header .right-btns img {
             border: 1.5px solid #ccc;
             border-radius: 50%;
             object-fit: cover;
         }
-
-
         .hero {
             background: linear-gradient(105deg, #e4f0fc 0%, #fffbe8 100%);
             min-height: 240px;
@@ -293,10 +279,11 @@
             padding-bottom: 16px;
             max-width: 92vw;
         }
+
+        /* 3D style for category cards */
         .shop-category-card {
-            background: #fff;
+            background: linear-gradient(145deg, #f5f7ff, #dbe4ff);
             border-radius: 30px;
-            box-shadow: 0 2px 16px #0001;
             padding: 28px 30px 22px 30px;
             min-width: 165px;
             max-width: 210px;
@@ -304,60 +291,102 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            border: 1.5px solid #eee;
-            transition: box-shadow 0.19s, border 0.17s, background 0.13s, transform 0.14s;
+            cursor: pointer;
             text-decoration: none;
             margin-bottom: 24px;
+            box-shadow:
+                inset 2px 2px 5px #e1e6f9,
+                7px 7px 15px #b0b8d1,
+                -7px -7px 15px #ffffff;
+            transition:
+                box-shadow 0.25s ease,
+                transform 0.25s ease,
+                background 0.3s ease;
         }
         .shop-category-card:hover {
-            box-shadow: 0 8px 32px #0002;
-            border: 1.5px solid #111;
-            background: #fafbff;
+            box-shadow:
+                inset 3px 3px 7px #d1dbff,
+                10px 10px 25px #8191b3,
+                -10px -10px 25px #f7fbff;
+            background: linear-gradient(145deg, #e1e6f9, #c7d3ff);
+            transform: scale(1.08) translateY(-4px);
             text-decoration: none;
-            transform: scale(1.045);
         }
         .shop-category-card img {
             width: 64px;
             height: 64px;
             margin-bottom: 17px;
             object-fit: contain;
+            filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.1));
+            transition: filter 0.25s ease;
+        }
+        .shop-category-card:hover img {
+            filter: drop-shadow(2px 4px 5px rgba(0,0,0,0.2));
         }
         .shop-category-card .cat-label {
-            font-size: 1.08rem;
-            font-weight: 600;
-            color: #111;
-            margin-bottom: 2px;
-        }
-        .shop-category-card .cat-desc {
-            font-size: 0.98rem;
-            color: #757575;
-            margin-bottom: 2px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #223366;
+            margin-bottom: 4px;
+            text-shadow: 1px 1px 1px rgba(255 255 255 / 0.7);
         }
         .shop-category-card .cat-listings {
-            font-size: 0.99rem;
-            color: #aaa;
-            margin-top: 2px;
-            font-weight: 400;
+            font-size: 0.95rem;
+            color: #64708a;
+            font-weight: 500;
         }
+
+        /* 3D style back button */
+        .btn-outline.back-btn {
+            margin: 20px 60px;
+            display: inline-block;
+            background: linear-gradient(135deg, #dbe4ff, #a6b8ff);
+            border: none;
+            border-radius: 15px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #223366;
+            box-shadow:
+                5px 5px 15px #9caeda,
+                -5px -5px 15px #ffffff;
+            transition:
+                background 0.3s ease,
+                box-shadow 0.3s ease,
+                transform 0.25s ease;
+            cursor: pointer;
+            text-decoration: none;
+            user-select: none;
+        }
+        .btn-outline.back-btn:hover,
+        .btn-outline.back-btn:focus {
+            background: linear-gradient(135deg, #a6b8ff, #e2e9ff);
+            box-shadow:
+                8px 8px 24px #7a8ec9,
+                -8px -8px 24px #f5f9ff;
+            transform: scale(1.05) translateY(-3px);
+            color: #10274b;
+        }
+
         @media (max-width: 1100px) {
             .shop-category-grid { gap: 18px; margin-left: 18px;}
             .shop-category-title { margin-left: 18px;}
             .category-tabs { width: 98vw;}
         }
         @media (max-width: 700px) {
-            .header-container { padding: 0 2vw; } /* Adjust padding for smaller screens */
-            .main-header { padding: 12px 0 8px 0; gap: 12px; } /* No horizontal padding here */
+            .header-container { padding: 0 2vw; }
+            .main-header { padding: 12px 0 8px 0; gap: 12px; }
             .shop-category-grid { gap: 10px; margin-left: 2vw;}
             .shop-category-title { margin-left: 2vw; font-size: 1.07rem;}
             .category-tabs { width: 100vw; gap: 22px;}
             .main-header .nav {
-                display: none; /* Hide nav links on very small screens if desired */
+                display: none;
             }
             .main-header .right-btns {
-                gap: 8px; /* Further reduce gap for small screens */
+                gap: 8px;
             }
             .main-header .logo {
-                font-size: 1.6rem; /* Adjust logo size */
+                font-size: 1.6rem;
                 padding: 4px 16px 4px 10px;
             }
         }
@@ -423,33 +452,34 @@
     <div class="shop-category-title">Shop by category</div>
     <div class="shop-category-grid">
         <%
-        // Data for each category
         const categoriesData = {
             "Women": [
                 { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Shirts and Blouses', listings:'100,000+ listings' },
                 { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
                 { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses and Skirts', listings:'100,000+ listings' }
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892440.png', label:'Accessories', listings:'100,000+ listings' },
             ],
             "Men": [
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'T-Shirts and Sweats', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Shirts and Polo Shirts', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' }
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Shirts and Polos', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Pants and Shorts', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Jackets and Hoodies', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892440.png', label:'Watches', listings:'100,000+ listings' },
             ],
             "Kids": [
-                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'T-Shirts and Sweaters', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses', listings:'100,000+ listings' }
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Kids Tops', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Kids Bottoms', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Kids Outerwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892440.png', label:'Kids Accessories', listings:'100,000+ listings' },
             ],
             "Baby": [
-                { icon:'https://cdn-icons-png.flaticon.com/512/135/135574.png', label:'Newborn (0 to 24 months)', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/135/135574.png', label:'Toddler (6 months to 5 year old)', listings:'100,000+ listings' }
-            ]
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Baby Onesies', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Baby Pants', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Baby Jackets', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892440.png', label:'Baby Accessories', listings:'100,000+ listings' },
+            ],
         };
         (categoriesData[category] || []).forEach(function(item) { %>
-            <a href="#" class="shop-category-card">
+            <a href="/category/<%= category %>/<%= encodeURIComponent(item.label) %>" class="shop-category-card">
                 <img src="<%= item.icon %>" alt="<%= item.label %>" />
                 <div class="cat-label"><%= item.label %></div>
                 <div class="cat-listings"><%= item.listings %></div>
@@ -457,5 +487,8 @@
         <% }); %>
     </div>
 
+    <a href="/<%= category.toLowerCase() %>" class="btn-outline back-btn">
+        ← Back to <%= category %>
+    </a>
 </body>
 </html>

@@ -55,16 +55,16 @@
             <td><%= products[i].quantity %></td>
             <td>$<%= products[i].price.toFixed(2) %></td>
             <!-- Edit Link -->
-            <td><a href="/updateProduct/<%= products[i].productId %>">Edit</a></td>
+            <td><a href="/editProduct/<%= products[i].productId %>">Edit</a></td>
             <!-- Delete Link -->
-            <td><a href="/deleteProduct/<%= products[i].productId %>" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a></td>
+            <a href="/products/<%= products[i].productId %>/deleteProduct">Delete</a>
           </tr>
         <% } %>
       </tbody>
     </table>
   </div>
   <div class="text-center my-4">
-  <a href="/sell" class="btn btn-primary">Add New Product</a>
+  <a href="/sel" class="btn btn-primary">Add New Product</a>
 </div>
 </body>
 </html>

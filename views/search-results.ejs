@@ -234,6 +234,7 @@
     <nav class="nav">
       <a class="nav-link" href="/women">WOMEN</a>
       <a class="nav-link" href="/men">MEN</a>
+      <a class="nav-link" href="/kids">KIDS</a>
       <a class="nav-link" href="/baby">BABY</a>
     </nav>
     <div class="icons">
@@ -256,9 +257,25 @@
   <% if (typeof searchQuery !== 'undefined' && searchQuery.trim() !== '') { %>
     <div class="container mt-4 mb-5">
       <h4>Showing results for "<%= searchQuery %>"</h4>
-      <div class="alert alert-info mt-2">No actual results implemented.</div>
-    </div>
-  <% } %>
+      <div class="search-results">
+        <% if (products.length === 0) { %>
+          <div class="alert alert-warning mt-2">No results found for "<%= searchQuery %>"</div>
+        <% } else { %>
+          <div class="row mt-4">
+            <% products.forEach(function(product) { %>
+              <div class="col-md-4 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= product.productName %></h5>
+                    <p class="card-text">Price: $<%= product.price %></p>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div> <!-- close row -->
+        <% } %>  <!-- close else -->
+  <% } %>  <!-- YOU NEED THIS CLOSING TAG -->
+
 
   <div class="category-grid">
     <!-- Women -->
@@ -309,7 +326,7 @@
     </div>
     <!-- Others -->
     <div>
-      <div class="category-title-col">&nbsp;</div>
+      <div class="category-title-col">KIDS</div>
       <div class="category-list">
         <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_29_465108?$grid$" alt=""> <span class="category-label">Accessories</span></div>
         <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_30_465109?$grid$" alt=""> <span class="category-label">Pre-Order</span></div>

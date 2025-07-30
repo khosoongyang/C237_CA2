@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= category %> - <%= type %> Products</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #18191a;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding-top: 70px;
+    }
+
+    .main-navbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 68px;
+      background: transparent !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2vw;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .navbar-left {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .navbar-company {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(0,0,0,0.12);
+      margin-right: 18px;
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
+      line-height: 1;
+      padding: 0 6px;
+      background: rgba(0,0,0,0.13);
+      border-radius: 7px;
+    }
+
+    .nav-center {
+      pointer-events: auto;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .nav-center .nav-link {
+      font-size: 1.13rem;
+      font-weight: 500;
+      color: #fff;
+      opacity: 0.9;
+      border-bottom: 2px solid transparent;
+      transition: border 0.2s, color 0.2s, transform 0.15s;
+      padding: 3px 0 1px 0;
+      text-decoration: none;
+    }
+
+    .nav-center .nav-link:hover {
+      color: #fff;
+      border-bottom: 2.5px solid #fff;
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    .nav-icons {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.3rem;
+      transition: background 0.2s ease, transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255,255,255,0.15);
+      transform: scale(1.16);
+      box-shadow: 0 2px 8px #00bcd4a0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+      gap: 30px;
+    }
+
+    .product-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 15px;
+      width: 240px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    }
+
+    .product-card img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .product-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .product-card .price {
+      font-size: 1rem;
+      color: #00e6b8;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .product-card .desc {
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-bottom: 6px;
+    }
+
+    .product-card .qty {
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 15px;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .btn-edit {
+      background: #007bff;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+
+    .btn-edit:hover {
+      background: #0056b3;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #c82333;
+      color: white;
+    }
+
+    .no-products {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="main-navbar">
+    <div class="navbar-left">
+      <a class="navbar-company" href="/">Seam &amp; Soul</a>
+    </div>
+    <div class="nav-center">
+      <a class="nav-link" href="/women">WOMEN</a>
+      <a class="nav-link" href="/men">MEN</a>
+      <a class="nav-link" href="/kids">KIDS</a>
+      <a class="nav-link" href="/baby">BABY</a>
+    </div>
+    <div class="nav-icons">
+      <form action="/language" method="post" style="display:inline;">
+        <button class="icon-btn" type="submit" name="lang" value="en" title="Language">🌐</button>
+      </form>
+      <a class="icon-btn" href="/favorites" title="Favorites">❤️</a>
+      <a class="icon-btn" href="/cart" title="Cart">🛒</a>
+    </div>
+  </nav>
+
+  <!-- PRODUCTS -->
+  <h1><%= category %> - <%= type %></h1>
+
+  <% if (products.length > 0) { %>
+    <div class="product-grid">
+      <% products.forEach(product => { %>
+        <div class="product-card">
+          <img src="/uploads/<%= product.image %>" alt="<%= product.productName %>">
+          <h3><%= product.productName %></h3>
+          <p class="price">$<%= product.price %></p>
+          <p class="desc"><%= product.description %></p>
+          <p class="qty">Quantity: <%= product.quantity %></p>
+          
+          <div class="product-actions">
+            <a class="btn-edit" href="/products/<%= product.productId %>/edit" title="Edit">Edit</a>
+            <a class="btn-delete" href="/products/<%= product.productId %>/deleteProduct" title="Delete">Delete</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p class="no-products">No products found for this type.</p>
+  <% } %>
+
+</body>
+</html>
