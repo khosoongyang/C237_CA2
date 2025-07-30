@@ -32,7 +32,7 @@
             align-items: center;
             /* Remove padding, it's now handled by .header-container */
             padding: 18px 0 12px 0;
-            /* background: #fff;  Moved to .header-container */
+            /* background: #fff;  Moved to .header-container */
             /* border-bottom: 1px solid #eee; Moved to .header-container */
             gap: 36px;
             width: 100%; /* Make main-header fill its container */
@@ -424,38 +424,28 @@
     <div class="shop-category-grid">
         <%
         // Data for each category
-        const categoriesData = { // Renamed to avoid conflict with `categories` variable in app.js
-            'Women': [
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Tops', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses & sets', listings:'100,000+ listings' },
+        const categoriesData = {
+            "Women": [
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Shirts and Blouses', listings:'100,000+ listings' },
                 { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3345/3345397.png', label:'Jewellery', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Bags & Wallets', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' }
-            ],
-            'Men': [
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Tops', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Bags & Wallets', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' },
                 { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/1946/1946429.png', label:'Watches', listings:'100,000+ listings' }
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses and Skirts', listings:'100,000+ listings' }
             ],
-            'Kids': [
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Tops', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses & sets', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3636/3636997.png', label:'Schoolwear', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Bags & Wallets', listings:'100,000+ listings' }
+            "Men": [
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'T-Shirts and Sweats', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'Shirts and Polo Shirts', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' }
             ],
-            'Baby': [
-                { icon:'https://cdn-icons-png.flaticon.com/512/135/135574.png', label:'Onesies & Bodysuits', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses & sets', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/3144/3144456.png', label:'Blankets & Swaddles', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/833/833314.png', label:'Footwear', listings:'100,000+ listings' },
+            "Kids": [
+                { icon:'https://cdn-icons-png.flaticon.com/512/3555/3555627.png', label:'Outerwear', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892458.png', label:'T-Shirts and Sweaters', listings:'100,000+ listings' },
                 { icon:'https://cdn-icons-png.flaticon.com/512/892/892457.png', label:'Bottoms', listings:'100,000+ listings' },
-                { icon:'https://cdn-icons-png.flaticon.com/512/194/194938.png', label:'Accessories', listings:'100,000+ listings' }
+                { icon:'https://cdn-icons-png.flaticon.com/512/892/892463.png', label:'Dresses', listings:'100,000+ listings' }
+            ],
+            "Baby": [
+                { icon:'https://cdn-icons-png.flaticon.com/512/135/135574.png', label:'Newborn (0 to 24 months)', listings:'100,000+ listings' },
+                { icon:'https://cdn-icons-png.flaticon.com/512/135/135574.png', label:'Toddler (6 months to 5 year old)', listings:'100,000+ listings' }
             ]
         };
         (categoriesData[category] || []).forEach(function(item) { %>

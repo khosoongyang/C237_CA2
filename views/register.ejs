@@ -145,7 +145,7 @@
             <label for="role" class="form-label">Role:</label>
             <select id="role" name="role" class="form-control" required>
                 <option value="user" <%= formData && (formData.role === 'user' || formData.role === 'User') ? 'selected' : '' %>>User</option>
-                <option value="admin" <%= formData && (formData.role === 'admin' || formData.role === 'Admin') ? 'selected' : '' %>>Admin</option>
+                <option value="admin" <%= formData && (formData.role === 'admin' || formData.role === 'Seller') ? 'selected' : '' %>>Admin</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Register</button>

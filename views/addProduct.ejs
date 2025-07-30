@@ -35,13 +35,13 @@
       font-weight: 500;
       color: #111;
     }
-    .form-control, textarea {
+    .form-control, textarea, .form-select { /* Added .form-select here */
       border-radius: 8px;
       border: 1.2px solid #222;
       font-size: 1.07rem;
       font-family: 'Poppins', sans-serif;
     }
-    .form-control:focus {
+    .form-control:focus, .form-select:focus { /* Added .form-select here */
       border-color: #111;
       box-shadow: 0 0 0 2px #1112;
     }
@@ -98,9 +98,22 @@
       </div>
       <div class="form-group mb-3">
         <label for="category" class="form-label">Category</label>
-        <input type="text" class="form-control" id="category" name="category" required
-          value="<%= formData && formData.category ? formData.category : '' %>">
+        <select class="form-select" id="category" name="category" required>
+          <option value="" disabled <%= !formData.category ? 'selected' : '' %>>Select a category</option>
+          <option value="Women" <%= formData.category === 'Women' ? 'selected' : '' %>>Women</option>
+          <option value="Men" <%= formData.category === 'Men' ? 'selected' : '' %>>Men</option>
+          <option value="Kids" <%= formData.category === 'Kids' ? 'selected' : '' %>>Kids</option>
+          <option value="Baby" <%= formData.category === 'Baby' ? 'selected' : '' %>>Baby</option>
+        </select>
       </div>
+
+      <div class="form-group mb-3">
+        <label for="type" class="form-label">Type</label>
+        <select class="form-select" id="type" name="type" required>
+          <option value="" disabled selected>Select a type</option>
+          </select>
+      </div>
+
       <div class="form-group mb-3">
         <label for="quantity" class="form-label">Quantity</label>
         <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1" required
@@ -125,5 +138,69 @@
       </div>
     </form>
   </div>
+
+  <script>
+    const categorySelect = document.getElementById('category');
+    const typeSelect = document.getElementById('type');
+    const initialSelectedCategory = '<%= formData.category || "" %>'; // Get previously selected category
+    const initialSelectedType = '<%= formData.type || "" %>'; // Get previously selected type
+
+    const typeOptions = {
+      "Women": [
+        "Shirts and Blouses",
+        "Bottoms",
+        "Outerwear",
+        "Dresses and Skirts"
+      ],
+      "Men": [
+        "T-Shirts and Sweats",
+        "Shirts and Polo Shirts",
+        "Outerwear",
+        "Bottoms"
+      ],
+      "Kids": [ // Added Kids category
+        "Outerwear",
+        "T-Shirts and Sweaters",
+        "Bottoms",
+        "Dresses"
+      ],
+      "Baby": [
+        "Newborn (0 to 24 months)",
+        "Toddler (6 months to 5 year old)"
+      ]
+    };
+
+    function populateTypes(selectedCategory, selectedType = '') {
+      typeSelect.innerHTML = '<option value="" disabled selected>Select a type</option>'; // Reset options
+
+      const types = typeOptions[selectedCategory];
+      if (types && types.length > 0) {
+        types.forEach(type => {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type;
+          if (type === selectedType) { // Re-select previous type if applicable
+            option.selected = true;
+          }
+          typeSelect.appendChild(option);
+        });
+        typeSelect.disabled = false; // Enable if there are types
+      } else {
+        typeSelect.disabled = true; // Disable if no types for category
+      }
+    }
+
+    // Event listener for category change
+    categorySelect.addEventListener('change', function() {
+      populateTypes(this.value); // Populate with default (no specific type selected)
+    });
+
+    // Initial population on page load (useful if formData has pre-selected values)
+    if (initialSelectedCategory) {
+      populateTypes(initialSelectedCategory, initialSelectedType);
+    } else {
+      typeSelect.disabled = true; // Disable type dropdown if no category is selected initially
+    }
+  </script>
 </body>
 </html>

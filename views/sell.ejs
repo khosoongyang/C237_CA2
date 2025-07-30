@@ -100,28 +100,28 @@
         <form action="/sell" method="POST" enctype="multipart/form-data">
             <div class="class-form">
                 <div class="mb-3">
-                    <label for="itemName" class="form-label">Item Name</label>
+                    <label for="productName" class="form-label">Item Name</label>
                     <input type="text" class="form-control" id="itemName" name="itemName" required>
                 </div>
                 <div class="mb-3">
-                    <label for="itemDescription" class="form-label">Item Description</label>
+                    <label for="description" class="form-label">Item Description</label>
                     <textarea class="form-control" id="itemDescription" name="itemDescription" rows="3"
                         required></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="itemPrice" class="form-label">Item Price ($)</label>
+                    <label for="price" class="form-label">Item Price ($)</label>
                     <input type="number" class="form-control" id="itemPrice" name="itemPrice" step="0.01" min="0"
                         required>
                 </div>
                 <p>Clothing Category</p>
-                <select name="Clothing Category" class="form-select mb-3" required>
+                <select name="category" class="form-select mb-3" required>
                     <option value="men">Men</option>
                     <option value="women">Women</option>
                     <option value="kids">Kids</option>
                     <option value="baby">Baby</option>
                 </select><br>
                 <p>Clothing Type</p>
-                <select name="Clothing Type" class="form-select mb-3" required>
+                <select name="type" class="form-select mb-3" required>
                     <option value="bagswallets">Bags & Wallets</option>
                     <option value="footwear">Footwear</option>
                     <option value="dressnset">Dresses & Sets</option>
@@ -135,7 +135,8 @@
                     <option value="stroller">Strollers</option>
                 </select><br>
                 <div class="mb-3">
-                    <label for="itemImage" class="form-label">Item Image</label>
+                    <label for="image" class="form-label">Item Image</label>
                     <input class="form-control" type="file" id="image" name="image" accept="image/*" required>
                 </div>
+                <button type="submit" class="btn btn-primary">Sell Item</button>
             </div>
