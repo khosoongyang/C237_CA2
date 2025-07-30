@@ -50,10 +50,10 @@
       <tbody>
         <% for(let i=0; i < products.length; i++) { %>
           <tr>
-            <td><a href="/product/<%= products[i].productId %>" ><%= products[i].productName %></a></td>
+            <td><a href="/type-products/<%= products[i].productId %>" ><%= products[i].productName %></a></td>
             <td><img src = "images/<%= products[i].image %>" width="20%"></td>
             <td><%= products[i].quantity %></td>
-            <td>$<%= products[i].price.toFixed(2) %></td>
+            <td>$<%= Number(products[i].price).toFixed(2) %></td>
             <!-- Edit Link -->
             <td><a href="/editProduct/<%= products[i].productId %>">Edit</a></td>
             <!-- Delete Link -->

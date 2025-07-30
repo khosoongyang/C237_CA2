@@ -215,6 +215,19 @@
       background: #fff;
       padding: 0 0 44px 0;
     }
+    /* Styles for clickable product cards */
+    .product-link {
+        text-decoration: none; /* Remove default underline */
+        color: inherit; /* Inherit text color */
+        display: block; /* Make the whole card clickable */
+    }
+    .product-link .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .product-link:hover .card {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
     @media (max-width: 1100px) {
       .category-grid { grid-template-columns: repeat(3, 1fr); gap: 24px;}
     }
@@ -264,17 +277,26 @@
           <div class="row mt-4">
             <% products.forEach(function(product) { %>
               <div class="col-md-4 mb-3">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title"><%= product.productName %></h5>
-                    <p class="card-text">Price: $<%= product.price %></p>
+                <!-- Make the entire card clickable -->
+                <a href="/product/<%= product.productId %>" class="product-link">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= product.productName %></h5>
+                      <p class="card-text">Price: $<%= product.price %></p>
+                      <!-- Add image if available -->
+                      <% if (product.image) { %>
+                        <img src="/uploads/<%= product.image %>" class="img-fluid rounded" alt="<%= product.productName %>" style="max-height: 150px; object-fit: cover; width: 100%; margin-top: 10px;">
+                      <% } %>
+                    </div>
                   </div>
-                </div>
+                </a>
               </div>
             <% }) %>
           </div> <!-- close row -->
         <% } %>  <!-- close else -->
-  <% } %>  <!-- YOU NEED THIS CLOSING TAG -->
+      </div> <!-- close search-results -->
+    </div> <!-- close container -->
+  <% } %>  <!-- close if (typeof searchQuery... -->
 
 
   <div class="category-grid">
@@ -282,25 +304,19 @@
     <div>
       <div class="category-title-col">WOMEN</div>
       <div class="category-list">
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_69_465287?$grid$" alt=""> <span class="category-label">T-Shirts, Bra Tops & Sweats</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_37_466425?$grid$" alt=""> <span class="category-label">Dresses & Skirts</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_68_467314?$grid$" alt=""> <span class="category-label">Maternity</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_02_465099?$grid$" alt=""> <span class="category-label">HEATTECH</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_66_466135?$grid$" alt=""> <span class="category-label">AIRism</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_21_464842?$grid$" alt=""> <span class="category-label">Special Collaborations</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_68_467314?$grid$" alt=""> <span class="category-label">New Price</span></div>
+        <div class="category-item"><span class="category-label">Shirts and Blouses</span></div>
+        <div class="category-item"><span class="category-label">Bottoms</span></div>
+        <div class="category-item"><span class="category-label">Outerwear</span></div>
+        <div class="category-item"><span class="category-label">Accessories</span></div>
       </div>
     </div>
     <!-- Men -->
     <div>
       <div class="category-title-col">MEN</div>
       <div class="category-list">
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_01_464816?$grid$" alt=""> <span class="category-label">T-Shirts, Polo Shirts</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_36_466426?$grid$" alt=""> <span class="category-label">Shirts</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_85_466462?$grid$" alt=""> <span class="category-label">HEATTECH</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_34_466427?$grid$" alt=""> <span class="category-label">AIRism</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_02_465099?$grid$" alt=""> <span class="category-label">Special Collaborations</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_61_464848?$grid$" alt=""> <span class="category-label">New Price</span></div>
+        <div class="category-item"><span>Shirts and Polos</span></div>
+        <div class="category-item"><span class="category-label">Pants and Shorts</span></div>
+        <div class="category-item"><span class="category-label">Jackets and Hoodies</span></div>
       </div>
     </div>
     <!-- Kids (if you want to hide, remove this block) -->
@@ -316,24 +332,20 @@
     <div>
       <div class="category-title-col">BABY</div>
       <div class="category-list">
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_28_465101?$grid$" alt=""> <span class="category-label">Knitwear</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_56_465103?$grid$" alt=""> <span class="category-label">Loungewear</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_41_465104?$grid$" alt=""> <span class="category-label">Coming Soon</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_13_465105?$grid$" alt=""> <span class="category-label">Sport Utility Wear</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_22_465106?$grid$" alt=""> <span class="category-label">UT Graphic T-shirts</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_23_465107?$grid$" alt=""> <span class="category-label">Sale</span></div>
+        <div class="category-item"><span class="category-label">Baby Onesies</span></div>
+        <div class="category-item"><span class="category-label">Baby Pants</span></div>
+        <div class="category-item"><span class="category-label">Baby Jackets</span></div>
+        <div class="category-item"><span class="category-label">Baby Accessories</span></div>
       </div>
     </div>
     <!-- Others -->
     <div>
       <div class="category-title-col">KIDS</div>
       <div class="category-list">
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_29_465108?$grid$" alt=""> <span class="category-label">Accessories</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_30_465109?$grid$" alt=""> <span class="category-label">Pre-Order</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_31_465110?$grid$" alt=""> <span class="category-label">Linen</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_32_465111?$grid$" alt=""> <span class="category-label">2025 Spring/Summer</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_33_465112?$grid$" alt=""> <span class="category-label">Extra Lengths & Sizes</span></div>
-        <div class="category-item"><img src="https://uniqlo.scene7.com/is/image/UNIQLO/goods_34_465113?$grid$" alt=""> <span class="category-label">Multi-buy</span></div>
+        <div class="category-item"><span class="category-label">Kids Tops</span></div>
+        <div class="category-item"><span class="category-label">Kids Bottoms</span></div>
+        <div class="category-item"><span class="category-label">Kids Outerwear</span></div>
+        <div class="category-item"><span class="category-label">Kids Accessories</span></div>
       </div>
     </div>
   </div>

@@ -6,7 +6,6 @@ const multer = require('multer');
 const fs = require('fs');
 const flash = require('connect-flash');
 const methodOverride = require('method-override'); // REQUIRED for DELETE forms
-const router = express.Router();
 
 
 const app = express();
@@ -69,10 +68,30 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware to check if user is logged in
 function requireLogin(req, res, next) {
-    if (!req.session.user) return res.redirect('/login');
+    if (!req.session.user) {
+        req.flash('error', 'You must be logged in to access this page.');
+        return res.redirect('/login');
+    }
     next();
 }
+
+// Middleware to check user role
+function requireRole(allowedRoles) {
+    return (req, res, next) => {
+        if (!req.session.user) {
+            req.flash('error', 'You must be logged in to access this page.');
+            return res.redirect('/login');
+        }
+        if (!allowedRoles.includes(req.session.user.role)) {
+            req.flash('error', 'You do not have permission to access this page.');
+            return res.status(403).redirect('/'); // Redirect to home or a permission denied page
+        }
+        next();
+    };
+}
+
 
 app.get('/', (req, res) => {
     res.render('index', { categories: ['Women', 'Men', 'Baby', 'Kids'] });
@@ -80,17 +99,16 @@ app.get('/', (req, res) => {
 
 // Category routes
 app.get('/category/:category', (req, res) => {
-  const categoryName = req.params.category();
-  const validCategories = ['women', 'men', 'kids', 'baby'];
+    const categoryName = req.params.category;
+    const validCategories = ['women', 'men', 'kids', 'baby'];
 
-  if (!validCategories.includes(categoryName)) {
-    return res.status(404).send('Category not found');
-  }
+    if (!validCategories.includes(categoryName)) {
+        return res.status(404).send('Category not found');
+    }
 
-  // Capitalize first letter for the template
-  const category = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+    const category = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
 
-  res.render('category', { category, user: req.user });
+    res.render('category', { category, user: req.session.user });
 });
 
 app.get('/women', (req, res) => {
@@ -181,14 +199,15 @@ app.get('/product/:productId', (req, res) => {
             return res.status(500).send('Error retrieving product details');
         }
         if (results.length > 0) {
-            res.render('productDetail', { product: results[0], user: req.session.user });
+            res.render('product', { products: [results[0]], user: req.session.user });
         } else {
             res.status(404).send('Product not found');
         }
     });
 });
 
-app.get('/addProduct', (req, res) => {
+// Apply requireRole middleware for adding products
+app.get('/addProduct', requireRole(['seller', 'admin']), (req, res) => {
     res.render('addProduct', {
         errors: req.flash('errors') || [],
         success: req.flash('success') || "",
@@ -197,7 +216,7 @@ app.get('/addProduct', (req, res) => {
     });
 });
 
-app.post('/addProduct', upload.single('image'), (req, res) => {
+app.post('/addProduct', requireRole(['seller', 'admin']), upload.single('image'), (req, res) => {
     const { productName, category, type, quantity, price, description } = req.body;
     const image = req.file ? req.file.filename : null;
 
@@ -215,13 +234,12 @@ app.post('/addProduct', upload.single('image'), (req, res) => {
             return res.redirect('/addProduct');
         }
         req.flash('success', 'Product added successfully!');
-        // ✅ Redirect to category page after successful insertion
-        res.redirect(`/category/${category}/${encodeURIComponent(type)}`);
+        res.redirect(`/`);
     });
 });
 
 //Delete product
-app.get('/products/:id/deleteProduct', (req, res) => {
+app.get('/products/:id/deleteProduct', requireRole(['seller', 'admin']), (req, res) => {
     const productId = req.params.id;
 
     const sql = 'SELECT * FROM products WHERE productId = ?';
@@ -229,33 +247,36 @@ app.get('/products/:id/deleteProduct', (req, res) => {
         if (err) return res.status(500).send('Database error');
         if (results.length === 0) return res.status(404).send('Product not found');
 
-        const product = results[0]; // Changed to singular 'product'
-        res.render('deleteProduct', { product }); // match with your ejs file
+        const product = results[0];
+        res.render('deleteProduct', { product });
     });
 });
 
-app.delete('/type-products/:id', (req, res) => {
+app.delete('/products/:id', requireRole(['seller', 'admin']), (req, res) => {
     const productId = req.params.id;
-    console.log('Deleting productId:', productId);
+    console.log('Attempting to delete productId:', productId);
 
     pool.query('DELETE FROM products WHERE productId = ?', [productId], (err, result) => {
         if (err) {
             console.error('Error deleting product:', err);
-            return res.status(500).send('Failed to delete product');
+            req.flash('error', 'Failed to delete product.');
+            return res.status(500).redirect('/products/' + productId + '/deleteProduct');
         }
 
         if (result.affectedRows === 0) {
-            return res.status(404).send('Product not found to delete');
+            console.warn(`Attempted to delete product ID ${productId}, but it was not found.`);
+            req.flash('error', 'Product not found to delete.');
+            return res.status(404).redirect('/products');
         }
 
         req.flash('success', 'Product deleted successfully!');
-        res.redirect('/');
+        res.redirect('/products');
     });
 });
 
 
 //Edit product
-app.get('/products/:id/edit', (req, res) => {
+app.get('/products/:id/edit', requireRole(['seller', 'admin']), (req, res) => {
     const productId = req.params.id;
     const sql = 'SELECT * FROM products WHERE productId = ?';
     pool.query(sql, [productId], (err, results) => {
@@ -265,7 +286,7 @@ app.get('/products/:id/edit', (req, res) => {
     });
 });
 
-app.post('/products/:id/edit', upload.single('image'), (req, res) => {
+app.post('/products/:id/edit', requireRole(['seller', 'admin']), upload.single('image'), (req, res) => {
     const productId = req.params.id;
     const { name, quantity, price, description, currentImage } = req.body;
     const image = req.file ? req.file.filename : currentImage;
@@ -287,10 +308,10 @@ app.post('/products/:id/edit', upload.single('image'), (req, res) => {
 });
 
 // Edit Added Products (This route was causing the 'connection' error)
-app.get('/edit/:id', (req, res) => {
+app.get('/edit/:id', requireRole(['seller', 'admin']), (req, res) => {
     const productId = req.params.id;
 
-    pool.query('SELECT * FROM products WHERE productId = ?', [productId], (err, results) => { // Corrected 'id' to 'productId'
+    pool.query('SELECT * FROM products WHERE productId = ?', [productId], (err, results) => {
         if (err) {
             console.error('Error fetching product for edit:', err);
             return res.status(500).send('Database error: Could not retrieve product for editing.');
@@ -301,38 +322,36 @@ app.get('/edit/:id', (req, res) => {
         }
 
         res.render('edit', { product: results[0] });
-        // Removed: res.redirect(`/category/${category}`); // This line would cause an error (headers already sent)
     });
 });
 
-app.post('/edit/:id', upload.single('image'), (req, res) => {
+app.post('/edit/:id', requireRole(['seller', 'admin']), upload.single('image'), (req, res) => {
     const id = req.params.id;
 
     const productName = req.body.productName;
     const category = req.body.category;
-    const type = req.body.type; // Added type here
+    const type = req.body.type;
     const price = req.body.price;
     const quantity = req.body.quantity;
     const description = req.body.description;
 
-    // Optional: update image if uploaded
     let sql;
     let params;
 
     if (req.file) {
         const image = req.file.filename;
-        sql = 'UPDATE products SET productName = ?, category = ?, type = ?, price = ?, quantity = ?, description = ?, image = ? WHERE productId = ?'; // Added type to SQL
-        params = [productName, category, type, price, quantity, description, image, id]; // Added type to params
+        sql = 'UPDATE products SET productName = ?, category = ?, type = ?, price = ?, quantity = ?, description = ?, image = ? WHERE productId = ?';
+        params = [productName, category, type, price, quantity, description, image, id];
     } else {
-        sql = 'UPDATE products SET productName = ?, category = ?, type = ?, price = ?, quantity = ?, description = ? WHERE productId = ?'; // Added type to SQL
-        params = [productName, category, type, price, quantity, description, id]; // Added type to params
+        sql = 'UPDATE products SET productName = ?, category = ?, type = ?, price = ?, quantity = ?, description = ? WHERE productId = ?';
+        params = [productName, category, type, price, quantity, description, id];
     }
 
-    pool.query(sql, params, (err, result) => { // Corrected 'connection.query' to 'pool.query'
+    pool.query(sql, params, (err, result) => {
         if (err) {
             console.error("Error updating product:", err);
-            req.flash('error', 'Failed to edit product'); // Use flash for user feedback
-            return res.redirect('/edit/' + id); // Redirect back to edit page with error
+            req.flash('error', 'Failed to edit product');
+            return res.redirect('/edit/' + id);
         }
 
         if (result.affectedRows === 0) {
@@ -341,16 +360,61 @@ app.post('/edit/:id', upload.single('image'), (req, res) => {
         }
 
         req.flash('success', 'Product updated successfully!');
-        res.redirect(`/category/${category}/${encodeURIComponent(type)}`); // Redirect to the specific category/type page
+        res.redirect(`/category/${category}/${encodeURIComponent(type)}`);
     });
 });
 
 
 // Favorites
-app.get('/favorites', (req, res) => {
+ app.get('/favorites', (req, res) => {
     res.render('favorites', {
-        user: req.session.user
+        user: req.session.user,
+        favorites: req.session.user?.favorites
     });
+ });
+
+
+
+app.post('/products/:productId/toggle-favorite', (req, res) => {
+  const { productId } = req.params;
+  const userId = req.session.userId;
+
+  pool.query(
+    'SELECT * FROM favorites WHERE userId = ? AND productId = ?',
+    [userId, productId],
+    (err, results) => {
+      if (err) {
+        console.error('SELECT error:', err.message);
+        return res.status(500).send('Server error');
+      }
+
+      if (results.length > 0) {
+        pool.query(
+          'DELETE FROM favorites WHERE userId = ? AND productId = ?',
+          [userId, productId],
+          (err2) => {
+            if (err2) {
+              console.error('DELETE error:', err2.message);
+              return res.status(500).send('Error removing favorite');
+            }
+            res.redirect('/favorites');
+          }
+        );
+      } else {
+        pool.query(
+          'INSERT INTO favorites (userId, productId) VALUES (?, ?)',
+          [userId, productId],
+          (err3) => {
+            if (err3) {
+              console.error('INSERT error:', err3.message);
+              return res.status(500).send('Error adding favorite');
+            }
+            res.redirect('/favorites');
+          }
+        );
+      }
+    }
+  );
 });
 
 // Cart
@@ -434,7 +498,7 @@ app.get('/user', requireLogin, (req, res) => {
 });
 
 // Edit User
-app.get('/editUser/:id', (req, res) => {
+app.get('/editUser/:id', requireRole(['admin']), (req, res) => { // Only admin can edit users
     const userId = req.params.id;
 
     const sql = 'SELECT * FROM users WHERE userId = ?';
@@ -450,7 +514,7 @@ app.get('/editUser/:id', (req, res) => {
     });
 });
 
-app.post('/editUser/:id', upload.single('profilepic'), (req, res) => {
+app.post('/editUser/:id', requireRole(['admin']), upload.single('profilepic'), (req, res) => { // Only admin can edit users
     const userId = req.params.id;
     const { username, email, password, currentprofilepic } = req.body;
     const profilepic = req.file ? req.file.filename : currentprofilepic;
@@ -472,24 +536,22 @@ app.post('/editUser/:id', upload.single('profilepic'), (req, res) => {
 });
 
 app.get('/search', (req, res) => {
-  let query = req.query.q;  // or req.body.query depending on method
+    let query = req.query.q;
 
-  // For example, query your database like:
-  pool.query('SELECT * FROM products WHERE productName LIKE ?', ['%' + query + '%'], function(error, results) {
-    if (error) {
-      // handle error, maybe send error page
-    } else {
-      res.render('search-results', {
-        searchQuery: query,
-        products: results  // send results (array) to your EJS template
-      });
-    }
-  });
+    pool.query('SELECT * FROM products WHERE productName LIKE ?', ['%' + query + '%'], function(error, results) {
+        if (error) {
+            console.error("Search error:", error);
+            return res.status(500).send('Error performing search');
+        } else {
+            res.render('search-results', {
+                searchQuery: query,
+                products: results,
+                user: req.session.user
+            });
+        }
+    });
 });
 
-
-
-module.exports = router;
 app.post('/search', (req, res) => {
     const q = req.body.q || '';
     res.redirect(`/search?q=${encodeURIComponent(q)}`);
@@ -509,21 +571,104 @@ app.get('/category/:category/:type', (req, res) => {
             if (err) {
                 console.error('Error fetching products by category and type:', err);
                 return res.status(500).send('DB error');
-            }
-            res.render('type-products', { // Ensure you have a 'type-products.ejs' view
+            };
+            res.render('type-products', {
                 category: category,
                 type: type,
                 products: results,
-                user: req.session.user
+                user: req.session.user, // Ensure user is passed here
+                requireRole: req.session.user ? req.session.user.role : ''
             });
         }
     );
 });
 
-app.get('/sell', (req, res) => {
+// Apply requireRole middleware to the /sell route
+app.get('/sell', requireRole(['seller', 'admin']), (req, res) => {
     res.redirect('/addProduct');
 });
 
+app.post('/products/:id/toggle-favorite', (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ success: false, message: 'Please log in first' });
+  }
+  const productId = req.params.id;
+  const userId = req.session.userId;
+
+  // ✅ Check if this favorite already exists
+  pool.query(
+    'SELECT * FROM favorites WHERE userId = ? AND productId = ?',
+    [userId, productId],
+    (selectErr, selectResults) => {
+      if (selectErr) {
+        console.error('SELECT error:', selectErr.message);
+        return res.status(500).send('Server error while checking favorites.');
+      }
+
+      if (selectResults.length > 0) {
+        // Already in favorites — redirect anyway
+        return res.redirect('/favorites');
+      }
+
+      // ✅ Not in favorites yet — insert it
+      pool.query(
+        'INSERT INTO favorites (userId, productId) VALUES (?, ?)',
+        [userId, productId],
+        (insertErr, insertResults) => {
+          if (insertErr) {
+            console.error('Insert error:', insertErr.message);
+            return res.status(500).send('Server error while adding favorite.');
+          }
+
+          res.redirect('/favorites');
+        }
+      );
+    }
+  );
+});
+
+//Remove from facvorites 
+app.post('/products/:productId/unfavorite', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/login');
+    }
+
+    const { productId } = req.params;
+    const { userId } = req.session.user;
+
+    await pool.promise().query(
+      'DELETE FROM favorites WHERE userId = ? AND productId = ?',
+      [userId, productId]
+    );
+
+    req.flash('success', 'Removed from favorites');
+    res.redirect('back');
+    
+  } catch (error) {
+    console.error('Unfavorite error:', error);
+    req.flash('error', 'Failed to remove favorite');
+    res.status(500).redirect('back');
+  }
+});
+
+
+app.get('/favorites', (req, res) => {
+  const userId = req.session.userId;
+
+  pool.query(
+    'SELECT * FROM products JOIN favorites ON products.productId = favorites.productId WHERE favorites.userId = ?',
+    [userId],
+    (err, products) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Something went wrong');
+        
+      }
+      res.render('favorites', { favorites: products, user: req.session.user });
+    }
+  );
+});
 
 
 const PORT = process.env.PORT || 3000;

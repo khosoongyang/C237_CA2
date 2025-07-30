@@ -291,6 +291,9 @@
       <a class="circle-btn" href="/" title="Home" aria-label="Home">🏠</a>
       <a class="circle-btn" href="/search" title="Search" aria-label="Search">🔍</a>
       <a class="circle-btn" href="/user" title="User" aria-label="User">👤</a>
+      <% if (user && user.role && (user.role.toLowerCase() === 'admin' || user.role.toLowerCase() === 'seller')) { %>
+        <a class="circle-btn" href="/sell" title="Sell" aria-label="Sell">💰</a>
+      <% } %>
     </div>
   </div>
 
