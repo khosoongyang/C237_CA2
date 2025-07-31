@@ -19,11 +19,11 @@ app.use(flash());
 
 // ---- MySQL Connection Pool ---- //
 const pool = mysql.createPool({
-    host: 'c237-all.mysql.database.azure.com',
-    user: 'c237admin',
-    password: 'c2372025!',
-    database: 'c237_clothingstoreapp',
-    port: 3306,
+    host: 'diaedr.h.filess.io',
+    user: 'c237CA2_seewisedot',
+    password: 'd09f4fbcf04db79d9a66b297b7ea0e3346c624b6',
+    database: 'c237CA2_seewisedot',
+    port: 61002,
     ssl: { rejectUnauthorized: false },
     waitForConnections: true,
     connectionLimit: 5, // Max number of connections in the pool
@@ -373,8 +373,6 @@ app.post('/edit/:id', requireRole(['seller', 'admin']), upload.single('image'), 
     });
  });
 
-
-
 app.post('/products/:productId/toggle-favorite', (req, res) => {
   const { productId } = req.params;
   const userId = req.session.userId;
@@ -423,7 +421,12 @@ app.get('/cart', (req, res) => {
     res.render('cart', {
         user: req.session.user,
         cart: cart
-    });
+    });GET
+});
+
+app.get('/cart', (req, res) => {
+    const cart = req.session.cart || [];
+    res.render('cart', { cart, user: req.session.user });
 });
 
 app.get('/register', (req, res) => {
@@ -559,29 +562,26 @@ app.post('/search', (req, res) => {
 
 app.post('/language', (req, res) => res.redirect('back'));
 
-// Route to handle category/type specific product listings (e.g., /category/Women/Dresses)
 app.get('/category/:category/:type', (req, res) => {
     const category = req.params.category;
     const type = req.params.type;
 
-    pool.query(
-        'SELECT * FROM products WHERE category = ? AND type = ?',
-        [category, type],
-        (err, results) => {
-            if (err) {
-                console.error('Error fetching products by category and type:', err);
-                return res.status(500).send('DB error');
-            };
+    const sql = 'SELECT * FROM products WHERE category = ? AND type = ?';
+
+    pool.query(sql, [category, type], (err, results) => {
+        if (err) {
+            console.error("Error fetching products:", err);
+            res.status(500).send("Internal server error");
+        } else {
             res.render('type-products', {
                 category: category,
                 type: type,
-                products: results,
-                user: req.session.user, // Ensure user is passed here
-                requireRole: req.session.user ? req.session.user.role : ''
+                products: results
             });
         }
-    );
+    });
 });
+
 
 // Apply requireRole middleware to the /sell route
 app.get('/sell', requireRole(['seller', 'admin']), (req, res) => {
@@ -668,6 +668,13 @@ app.get('/favorites', (req, res) => {
       res.render('favorites', { favorites: products, user: req.session.user });
     }
   );
+});
+
+app.get('/category', (req, res) => {
+    res.render('category', {
+        category: ['Women', 'Men', 'Kids', 'Baby'],
+        user: req.session.user
+    });
 });
 
 

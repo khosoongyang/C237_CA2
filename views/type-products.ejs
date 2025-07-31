@@ -184,6 +184,7 @@
       padding: 6px 12px;
       border-radius: 6px;;
       text-decoration: none;
+      text-align: center;
       font-size: 0.85rem;
       transition: background 0.2s;
     }
@@ -276,7 +277,9 @@
 
 <% if (!user) { %>
   <p class="text-center">Please log in to view products.</p>
+  <div class="d-flex justify-content-center mt-3">
   <a href="/login" class="btn btn-primary" style="width: 200px;">Login</a>
+</div>
 <% } else { %>
   <p class="text-center">
     Welcome, <%= user.username %>! Here are the <%= category %> - <%= type %> products.
