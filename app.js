@@ -26,7 +26,7 @@ const pool = mysql.createPool({
     port: 3306,
     ssl: { rejectUnauthorized: true },
     waitForConnections: true,
-    connectionLimit: 10, // Max number of connections in the pool
+    connectionLimit: 5, // Max number of connections in the pool
     queueLimit: 0 // No limit to the number of requests queued
 });
 
