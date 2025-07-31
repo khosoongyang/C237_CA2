@@ -24,7 +24,7 @@ const pool = mysql.createPool({
     password: 'c2372025!',
     database: 'c237_clothingstoreapp',
     port: 3306,
-    ssl: { rejectUnauthorized: true },
+    ssl: { rejectUnauthorized: false },
     waitForConnections: true,
     connectionLimit: 5, // Max number of connections in the pool
     queueLimit: 0 // No limit to the number of requests queued
