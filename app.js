@@ -6,6 +6,7 @@ const multer = require('multer');
 const fs = require('fs');
 const flash = require('connect-flash');
 const methodOverride = require('method-override'); // REQUIRED for DELETE forms
+const fileUpload = require('express-fileupload');
 
 
 const app = express();
@@ -15,6 +16,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+app.use(fileUpload());
+
 app.use(flash());
 
 // ---- MySQL Connection Pool ---- //
@@ -238,40 +242,73 @@ app.post('/addProduct', requireRole(['seller', 'admin']), upload.single('image')
     });
 });
 
-//Delete product
 app.get('/products/:id/deleteProduct', requireRole(['seller', 'admin']), (req, res) => {
-    const productId = req.params.id;
+  const productId = req.params.id;
 
-    const sql = 'SELECT * FROM products WHERE productId = ?';
-    pool.query(sql, [productId], (err, results) => {
-        if (err) return res.status(500).send('Database error');
-        if (results.length === 0) return res.status(404).send('Product not found');
+  const sql = 'SELECT * FROM products WHERE productId = ?';
+  pool.query(sql, [productId], (err, results) => {
+    if (err) return res.status(500).send('Database error');
+    if (results.length === 0) return res.status(404).send('Product not found');
 
-        const product = results[0];
-        res.render('deleteProduct', { product });
-    });
+    const product = results[0];
+    res.render('deleteProduct', { product });
+  });
 });
 
-app.delete('/products/:id', requireRole(['seller', 'admin']), (req, res) => {
-    const productId = req.params.id;
-    console.log('Attempting to delete productId:', productId);
+app.post('/products/:id/deleteProduct', requireRole(['seller', 'admin']), (req, res) => {
+  const productId = req.params.id;
 
-    pool.query('DELETE FROM products WHERE productId = ?', [productId], (err, result) => {
-        if (err) {
-            console.error('Error deleting product:', err);
-            req.flash('error', 'Failed to delete product.');
-            return res.status(500).redirect('/products/' + productId + '/deleteProduct');
-        }
+  const sql = 'SELECT * FROM products WHERE productId = ?';
+  pool.query(sql, [productId], (err, results) => {
+    if (err) return res.status(500).send('Database error');
+    if (results.length === 0) return res.status(404).send('Product not found');
 
-        if (result.affectedRows === 0) {
-            console.warn(`Attempted to delete product ID ${productId}, but it was not found.`);
-            req.flash('error', 'Product not found to delete.');
-            return res.status(404).redirect('/products');
-        }
+    const product = results[0];
+    const imagePath = path.join(__dirname, 'public', 'uploads', product.image);
 
-        req.flash('success', 'Product deleted successfully!');
-        res.redirect('/products');
+    const deleteSql = 'DELETE FROM products WHERE productId = ?';
+    pool.query(deleteSql, [productId], (err) => {
+      if (err) return res.status(500).send('Failed to delete product');
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlink(imagePath, (err) => {
+          if (err) console.error('Failed to delete image:', err);
+        });
+      }
+
+      res.redirect('/category');
     });
+  });
+});
+
+
+
+// POST route to delete product
+app.post('/products/:id/deleteProduct', requireRole(['seller', 'admin']), (req, res) => {
+  const productId = req.params.id;
+
+  const sql = 'SELECT * FROM products WHERE productId = ?';
+  pool.query(sql, [productId], (err, results) => {
+    if (err) return res.status(500).send('Database error');
+    if (results.length === 0) return res.status(404).send('Product not found');
+
+    const product = results[0];
+    const imagePath = path.join(__dirname, 'public', 'uploads', product.image);
+
+    const deleteSql = 'DELETE FROM products WHERE productId = ?';
+    pool.query(deleteSql, [productId], (err, result) => {
+      if (err) return res.status(500).send('Failed to delete product');
+
+      // Remove image from file system
+      if (fs.existsSync(imagePath)) {
+        fs.unlink(imagePath, err => {
+          if (err) console.error('Failed to delete image:', err);
+        });
+      }
+
+      res.redirect('/dashboard'); // Or wherever appropriate
+    });
+  });
 });
 
 
@@ -283,7 +320,13 @@ app.get('/products/:id/edit', requireRole(['seller', 'admin']), (req, res) => {
         if (err) return res.status(500).send('Database error');
         if (results.length === 0) return res.status(404).send('Product not found');
         res.render('edit', { product: results[0] });
+
+        const sqlDelete = 'DELETE FROM products WHERE productId = ?';
+    pool.query(sqlDelete, [productId], (err, result) => {
+      if (err) return res.status(500).send('Failed to delete product');
+      res.redirect('/category');
     });
+});
 });
 
 app.post('/products/:id/edit', requireRole(['seller', 'admin']), upload.single('image'), (req, res) => {
@@ -303,67 +346,79 @@ app.post('/products/:id/edit', requireRole(['seller', 'admin']), upload.single('
         }
 
         req.flash('success', 'Product updated successfully!');
-        res.redirect('/products');
+        res.redirect('/product');
     });
 });
 
 // Edit Added Products (This route was causing the 'connection' error)
-app.get('/edit/:id', requireRole(['seller', 'admin']), (req, res) => {
+app.get('/products/:id/edit', requireRole(['seller', 'admin']), (req, res) => {
     const productId = req.params.id;
+    const sql = 'SELECT * FROM products WHERE productId = ?';
+    pool.query(sql, [productId], (err, results) => {
+        if (err) return res.status(500).send('Database error');
+        if (results.length === 0) return res.status(404).send('Product not found');
 
-    pool.query('SELECT * FROM products WHERE productId = ?', [productId], (err, results) => {
-        if (err) {
-            console.error('Error fetching product for edit:', err);
-            return res.status(500).send('Database error: Could not retrieve product for editing.');
-        }
-
-        if (results.length === 0) {
-            return res.status(404).send('Product not found');
-        }
-
+        // ✅ Only one response here
         res.render('edit', { product: results[0] });
     });
 });
 
-app.post('/edit/:id', requireRole(['seller', 'admin']), upload.single('image'), (req, res) => {
-    const id = req.params.id;
+app.post('/edit/:id', requireRole(['admin', 'seller']), (req, res) => {
+  const productId = req.params.id;
 
-    const productName = req.body.productName;
-    const category = req.body.category;
-    const type = req.body.type;
-    const price = req.body.price;
-    const quantity = req.body.quantity;
-    const description = req.body.description;
+  // Ensure form body is parsed
+  const {
+    productName,
+    category,
+    type,
+    quantity,
+    price,
+    description,
+    currentImage
+  } = req.body;
 
-    let sql;
-    let params;
+  let imageFilename = currentImage;
 
-    if (req.file) {
-        const image = req.file.filename;
-        sql = 'UPDATE products SET productName = ?, category = ?, type = ?, price = ?, quantity = ?, description = ?, image = ? WHERE productId = ?';
-        params = [productName, category, type, price, quantity, description, image, id];
-    } else {
-        sql = 'UPDATE products SET productName = ?, category = ?, type = ?, price = ?, quantity = ?, description = ? WHERE productId = ?';
-        params = [productName, category, type, price, quantity, description, id];
+  // If a new image is uploaded, handle it
+  if (req.files && req.files.image) {
+    const image = req.files.image;
+    imageFilename = Date.now() + '_' + image.name;
+    image.mv(`public/uploads/${imageFilename}`, err => {
+      if (err) {
+        console.error('Image upload failed:', err);
+        return res.status(500).send('Image upload failed');
+      }
+    });
+  }
+
+  // Prepare SQL update
+  const sql = `
+    UPDATE products
+    SET productName = ?, category = ?, type = ?, quantity = ?, price = ?, description = ?, image = ?
+    WHERE productId = ?
+  `;
+
+  const values = [
+    productName,
+    category,
+    type,
+    quantity,
+    price,
+    description,
+    imageFilename,
+    productId
+  ];
+
+  // Execute update
+  pool.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error updating product:', err);
+      return res.status(500).send('Database update failed');
     }
 
-    pool.query(sql, params, (err, result) => {
-        if (err) {
-            console.error("Error updating product:", err);
-            req.flash('error', 'Failed to edit product');
-            return res.redirect('/edit/' + id);
-        }
-
-        if (result.affectedRows === 0) {
-            req.flash('error', 'Product not found for update.');
-            return res.redirect('/edit/' + id);
-        }
-
-        req.flash('success', 'Product updated successfully!');
-        res.redirect(`/category/${category}/${encodeURIComponent(type)}`);
-    });
+    res.redirect(`/category/${category}`);
+  });
 });
-
 
 // Favorites
  app.get('/favorites', (req, res) => {
@@ -555,6 +610,21 @@ app.get('/search', (req, res) => {
     });
 });
 
+app.get('/edit/:id', (req, res) => {
+  const productId = req.params.id;
+  const sql = 'SELECT * FROM products WHERE productId = ?';
+
+  pool.query(sql, [productId], (err, results) => {
+    if (err) return res.status(500).send('Database error');
+    if (results.length === 0) return res.status(404).send('Product not found');
+
+    const product = results[0];
+    res.render('edit', { product });
+  });
+});
+
+
+
 app.post('/search', (req, res) => {
     const q = req.body.q || '';
     res.redirect(`/search?q=${encodeURIComponent(q)}`);
@@ -678,7 +748,9 @@ app.get('/category', (req, res) => {
 });
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; 
 app.listen(PORT, () => {
     console.log(`🧵 Seam & Soul app running at http://localhost:${PORT}!`);
 });
+// Export the app for testing
+

@@ -1,367 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Search Results | Seam & Soul</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      background: #fff;
-      color: #111;
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .main-header {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 18px 32px 12px 32px;
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      gap: 36px;
-    }
-    .main-header .logo {
-      width: 50px;
-      height: 50px;
-      background: url('https://upload.wikimedia.org/wikipedia/commons/6/6f/Uniqlo_logo.svg') no-repeat center center;
-      background-size: contain;
-      margin-right: 24px;
-      cursor: pointer;
-    }
-    .main-header .nav {
-      display: flex;
-      gap: 28px;
-      align-items: center;
-      flex: 1;
-    }
-    .main-header .nav-link {
-      color: #111;
-      font-weight: 500;
-      text-decoration: none;
-      opacity: 0.95;
-      font-size: 1.13rem;
-      padding: 4px 0;
-      border-bottom: 2.5px solid transparent;
-      transition: color 0.16s, border 0.15s;
-    }
-    .main-header .nav-link.active,
-    .main-header .nav-link:focus,
-    .main-header .nav-link:hover {
-      color: #111;
-      border-bottom: 2.5px solid #111;
-      font-weight: 600;
-    }
-    .main-header .icons {
-      margin-left: auto;
-      display: flex;
-      gap: 18px;
-      align-items: center;
-    }
-    .main-header .icon-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: #222;
-      opacity: 0.8;
-      padding: 2px 4px;
-      margin: 0 2px;
-      transition: opacity 0.18s;
-      vertical-align: middle;
-    }
-    .main-header .icon-btn:hover {
-      opacity: 1;
-    }
+    <title>Search Results | Seam & Soul</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Body and HTML Styling */
+        html, body {
+            background: #fff; /* White background color */
+            color: #111; /* Dark text color */
+            font-family: 'Poppins', sans-serif; /* Global font setting */
+            margin: 0;
+            padding: 0;
+        }
 
-    /* Search bar at the top */
-    .searchbar-top {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin: 32px 0 0 0;
-    }
-    .searchbar-top-inner {
-      display: flex;
-      align-items: center;
-      width: 470px;
-      background: #f6f6f7;
-      border-radius: 25px;
-      padding: 4px 18px;
-      box-shadow: 0 2px 14px #0001;
-      border: 1px solid #eaeaea;
-    }
-    .searchbar-top-inner input[type="text"] {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 1.08rem;
-      color: #222;
-      outline: none;
-      padding: 10px 10px;
-      font-family: 'Poppins', sans-serif;
-    }
-    .searchbar-top-inner input[type="text"]::placeholder {
-      color: #aaa;
-      font-weight: 400;
-      letter-spacing: .01em;
-    }
-    .searchbar-top-inner .search-icon {
-      color: #999;
-      font-size: 1.35rem;
-      margin-right: 8px;
-    }
-    .searchbar-top-inner button {
-      margin-left: 8px;
-      background: #111;
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      padding: 9px 28px;
-      font-weight: 600;
-      font-size: 1.11rem;
-      transition: background 0.16s, transform 0.15s;
-      box-shadow: 0 2px 10px 0 #0001;
-    }
-    .searchbar-top-inner button:hover {
-      background: #222;
-      transform: scale(1.08);
-    }
+        /* Main Header Styling */
+        .main-header {
+            display: flex; /* Flexbox for alignment */
+            align-items: center; /* Vertically center items */
+            justify-content: flex-start; /* Align items to the start */
+            padding: 18px 32px 12px 32px; /* Padding around the header */
+            background: #fff; /* White background */
+            border-bottom: 1px solid #eee; /* Light gray bottom border */
+            gap: 36px; /* Space between header elements */
+        }
 
-    /* Category grid and rest unchanged */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 32px;
-      max-width: 1080px;
-      margin: 44px auto 0 auto;
-      background: #fff;
-    }
-    .category-title-col {
-      font-weight: 700;
-      font-size: 1.18rem;
-      border-bottom: 2px solid #222;
-      margin-bottom: 18px;
-      padding-bottom: 3px;
-      letter-spacing: .03em;
-      color: #222;
-    }
-    .category-list {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    .category-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.02rem;
-    }
-    .category-item img {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
-      border-radius: 8px;
-      background: #f6f6f6;
-      border: 1px solid #eee;
-      padding: 4px;
-    }
-    .category-label {
-      font-weight: 500;
-      color: #222;
-    }
-    .category-label.special {
-      color: #e60023;
-      font-weight: 700;
-    }
-    .category-label.gray {
-      color: #888;
-      font-size: 0.99rem;
-      font-weight: 400;
-    }
-    .category-label.blue {
-      color: #007acc;
-      font-weight: 600;
-      font-size: 1.02rem;
-    }
-    .category-label.green {
-      color: #1ebd6a;
-      font-weight: 600;
-      font-size: 1.02rem;
-    }
-    .category-label.orange {
-      color: #ff8c00;
-      font-weight: 600;
-      font-size: 1.02rem;
-    }
-    .info-section {
-      padding: 48px 0 10px 0;
-      background: #fff;
-      border-top: 1px solid #eee;
-      margin-top: 34px;
-    }
-    .info-section h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #111;
-    }
-    .info-section a {
-      color: #007acc;
-      text-decoration: underline;
-      font-size: 1.01rem;
-    }
-    .from-section {
-      background: #fff;
-      padding: 0 0 44px 0;
-    }
-    /* Styles for clickable product cards */
-    .product-link {
-        text-decoration: none; /* Remove default underline */
-        color: inherit; /* Inherit text color */
-        display: block; /* Make the whole card clickable */
-    }
-    .product-link .card {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
-    .product-link:hover .card {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-    @media (max-width: 1100px) {
-      .category-grid { grid-template-columns: repeat(3, 1fr); gap: 24px;}
-    }
-    @media (max-width: 800px) {
-      .category-grid { grid-template-columns: repeat(2, 1fr); gap: 14px;}
-    }
-    @media (max-width: 600px) {
-      .main-header { padding: 12px 8px 8px 8px; gap: 12px;}
-      .category-grid { grid-template-columns: 1fr; gap: 10px;}
-      .searchbar-top-inner { width: 98vw;}
-    }
-  </style>
+        /* Logo Styling in the Main Header */
+        .main-header .logo {
+            width: 50px;
+            height: 50px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/6/6f/Uniqlo_logo.svg') no-repeat center center; /* Background image for the logo */
+            background-size: contain; /* Contain the logo within its dimensions */
+            margin-right: 24px; /* Space to the right of the logo */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        /* Navigation Links Container in the Main Header */
+        .main-header .nav {
+            display: flex;
+            gap: 28px; /* Space between navigation links */
+            align-items: center;
+            flex: 1; /* Allows it to take up available space */
+        }
+
+        /* Individual Navigation Link Styling */
+        .main-header .nav-link {
+            color: #111;
+            font-weight: 500;
+            text-decoration: none;
+            opacity: 0.95;
+            font-size: 1.13rem;
+            padding: 4px 0;
+            border-bottom: 2.5px solid transparent; /* Transparent border for hover effect */
+            transition: color 0.16s, border 0.15s; /* Smooth transitions */
+        }
+
+        /* Active, Focus, and Hover States for Navigation Links */
+        .main-header .nav-link.active,
+        .main-header .nav-link:focus,
+        .main-header .nav-link:hover {
+            color: #111;
+            border-bottom: 2.5px solid #111; /* Dark border on hover/focus */
+            font-weight: 600; /* Bolder on hover/focus */
+        }
+
+        /* Icon Buttons Container in the Main Header */
+        .main-header .icons {
+            margin-left: auto; /* Push icons to the right */
+            display: flex;
+            gap: 18px; /* Space between icons */
+            align-items: center;
+        }
+
+        /* Styling for Icon Buttons */
+        .main-header .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #222;
+            opacity: 0.8;
+            padding: 2px 4px;
+            margin: 0 2px;
+            transition: opacity 0.18s; /* Smooth transition for opacity */
+            vertical-align: middle;
+        }
+
+        /* Hover State for Icon Buttons */
+        .main-header .icon-btn:hover {
+            opacity: 1; /* Full opacity on hover */
+        }
+
+        /* Search Bar at the Top Styling */
+        .searchbar-top {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Center the search bar */
+            margin: 32px 0 0 0; /* Top margin */
+        }
+
+        /* Inner Container for Search Bar Elements */
+        .searchbar-top-inner {
+            display: flex;
+            align-items: center;
+            width: 470px; /* Fixed width for the inner bar */
+            background: #f6f6f7; /* Light gray background */
+            border-radius: 25px; /* Rounded corners */
+            padding: 4px 18px;
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.0039); /* Subtle shadow */
+            border: 1px solid #eaeaea; /* Light border */
+        }
+
+        /* Styling for Search Input Field */
+        .searchbar-top-inner input[type="text"] {
+            flex: 1; /* Allow input to grow and shrink */
+            border: none;
+            background: transparent;
+            font-size: 1.08rem;
+            color: #222;
+            outline: none; /* Remove outline on focus */
+            padding: 10px 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Placeholder Styling for Search Input */
+        .searchbar-top-inner input[type="text"]::placeholder {
+            color: #aaa;
+            font-weight: 400;
+            letter-spacing: .01em;
+        }
+
+        /* Styling for Search Icon */
+        .searchbar-top-inner .search-icon {
+            color: #999;
+            font-size: 1.35rem;
+            margin-right: 8px;
+        }
+
+        /* Styling for Search Button */
+        .searchbar-top-inner button {
+            margin-left: 8px;
+            background: #111; /* Dark background */
+            color: #fff; /* White text */
+            border: none;
+            border-radius: 16px;
+            padding: 9px 28px;
+            font-weight: 600;
+            font-size: 1.11rem;
+            transition: background 0.16s, transform 0.15s; /* Smooth transitions */
+            box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.0039); /* Subtle shadow */
+        }
+
+        /* Hover State for Search Button */
+        .searchbar-top-inner button:hover {
+            background: #222; /* Slightly lighter dark background */
+            transform: scale(1.08); /* Slightly enlarge on hover */
+        }
+
+        /* Category Grid Layout */
+        .category-grid {
+            display: grid; /* CSS Grid for layout */
+            grid-template-columns: repeat(5, 1fr); /* 5 columns of equal width */
+            gap: 32px; /* Space between grid items */
+            max-width: 1080px; /* Max width for the grid */
+            margin: 44px auto 0 auto; /* Center the grid horizontally with top margin */
+            background: #fff;
+        }
+
+        /* Category Title Column Styling */
+        .category-title-col {
+            font-weight: 700;
+            font-size: 1.18rem;
+            border-bottom: 2px solid #222; /* Dark bottom border */
+            margin-bottom: 18px;
+            padding-bottom: 3px;
+            letter-spacing: .03em;
+            color: #222;
+        }
+
+        /* List of Category Items */
+        .category-list {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            gap: 18px; /* Space between list items */
+        }
+
+        /* Individual Category Item Styling */
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.02rem;
+        }
+
+        /* Image within Category Item (currently commented out in HTML) */
+        .category-item img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f6f6f6;
+            border: 1px solid #eee;
+            padding: 4px;
+        }
+
+        /* Default Category Label Styling */
+        .category-label {
+            font-weight: 500;
+            color: #222;
+        }
+
+        /* Special Category Label (e.g., Sale) */
+        .category-label.special {
+            color: #e60023; /* Red color */
+            font-weight: 700;
+        }
+
+        /* Gray Category Label */
+        .category-label.gray {
+            color: #888;
+            font-size: 0.99rem;
+            font-weight: 400;
+        }
+
+        /* Blue Category Label */
+        .category-label.blue {
+            color: #007acc; /* Blue color */
+            font-weight: 600;
+            font-size: 1.02rem;
+        }
+
+        /* Green Category Label */
+        .category-label.green {
+            color: #1ebd6a; /* Green color */
+            font-weight: 600;
+            font-size: 1.02rem;
+        }
+
+        /* Orange Category Label */
+        .category-label.orange {
+            color: #ff8c00; /* Orange color */
+            font-weight: 600;
+            font-size: 1.02rem;
+        }
+
+        /* Information Section Styling */
+        .info-section {
+            padding: 48px 0 10px 0;
+            background: #fff;
+            border-top: 1px solid #eee; /* Light top border */
+            margin-top: 34px;
+        }
+
+        /* Heading within Information Section */
+        .info-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        /* Link within Information Section */
+        .info-section a {
+            color: #007acc; /* Blue link color */
+            text-decoration: underline;
+            font-size: 1.01rem;
+        }
+
+        /* "From Seam & Soul" Section Styling */
+        .from-section {
+            background: #fff;
+            padding: 0 0 44px 0;
+        }
+
+        /* Styles for clickable product cards */
+        .product-link {
+            text-decoration: none; /* Remove default underline */
+            color: inherit; /* Inherit text color */
+            display: block; /* Make the entire card clickable */
+        }
+        .product-link .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover transition */
+        }
+        .product-link:hover .card {
+            transform: translateY(-5px); /* Lift card on hover */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1); /* Add shadow on hover */
+        }
+
+        /* Media Queries for Responsive Design */
+
+        /* Styles for screens smaller than 1100px */
+        @media (max-width: 1100px) {
+            .category-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+                gap: 24px;
+            }
+        }
+
+        /* Styles for screens smaller than 800px */
+        @media (max-width: 800px) {
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for smaller screens */
+                gap: 14px;
+            }
+        }
+
+        /* Styles for screens smaller than 600px (e.g., mobile phones) */
+        @media (max-width: 600px) {
+            .main-header {
+                padding: 12px 8px 8px 8px; /* Reduced header padding */
+                gap: 12px;
+            }
+            .category-grid {
+                grid-template-columns: 1fr; /* Single column for mobile */
+                gap: 10px;
+            }
+            .searchbar-top-inner {
+                width: 98vw; /* Full width for search bar on mobile */
+            }
+        }
+    </style>
 </head>
 <body>
-  <header class="main-header">
-    <a class="logo" href="/"></a>
-    <nav class="nav">
-      <a class="nav-link" href="/women">WOMEN</a>
-      <a class="nav-link" href="/men">MEN</a>
-      <a class="nav-link" href="/kids">KIDS</a>
-      <a class="nav-link" href="/baby">BABY</a>
-    </nav>
-    <div class="icons">
-      <button class="icon-btn" title="Globe" aria-label="Language">🌐</button>
-      <button class="icon-btn" title="Favorites" aria-label="Favorites">❤</button>
-      <button class="icon-btn" title="Cart" aria-label="Cart">🛒</button>
-    </div>
-  </header>
+    <header class="main-header">
+        <a class="logo" href="/"></a>
+        <nav class="nav">
+            <a class="nav-link" href="/women">WOMEN</a>
+            <a class="nav-link" href="/men">MEN</a>
+            <a class="nav-link" href="/kids">KIDS</a>
+            <a class="nav-link" href="/baby">BABY</a>
+        </nav>
+        <div class="icons">
+            <button class="icon-btn" title="Globe" aria-label="Language">🌐</button>
+            <button class="icon-btn" title="Favorites" aria-label="Favorites">❤</button>
+            <button class="icon-btn" title="Cart" aria-label="Cart">🛒</button>
+        </div>
+    </header>
 
-  <!-- Move searchbar to the top and make it work -->
-  <form class="searchbar-top" action="/search" method="get">
-    <div class="searchbar-top-inner">
-      <span class="search-icon">&#128269;</span>
-      <input type="text" name="q" placeholder="Search by keyword" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" />
-      <button type="submit">Search</button>
-    </div>
-  </form>
+    <form class="searchbar-top" action="/search" method="get">
+        <div class="searchbar-top-inner">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" name="q" placeholder="Search by keyword"
+                value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" />
+            <button type="submit">Search</button>
+        </div>
+    </form>
 
-  <!-- Optionally, show results for the query -->
-  <% if (typeof searchQuery !== 'undefined' && searchQuery.trim() !== '') { %>
-    <div class="container mt-4 mb-5">
-      <h4>Showing results for "<%= searchQuery %>"</h4>
-      <div class="search-results">
-        <% if (products.length === 0) { %>
-          <div class="alert alert-warning mt-2">No results found for "<%= searchQuery %>"</div>
-        <% } else { %>
-          <div class="row mt-4">
-            <% products.forEach(function(product) { %>
-              <div class="col-md-4 mb-3">
-                <!-- Make the entire card clickable -->
-                <a href="/product/<%= product.productId %>" class="product-link">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title"><%= product.productName %></h5>
-                      <p class="card-text">Price: $<%= product.price %></p>
-                      <!-- Add image if available -->
-                      <% if (product.image) { %>
-                        <img src="/uploads/<%= product.image %>" class="img-fluid rounded" alt="<%= product.productName %>" style="max-height: 150px; object-fit: cover; width: 100%; margin-top: 10px;">
-                      <% } %>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            <% }) %>
-          </div> <!-- close row -->
-        <% } %>  <!-- close else -->
-      </div> <!-- close search-results -->
-    </div> <!-- close container -->
-  <% } %>  <!-- close if (typeof searchQuery... -->
-
-
-  <div class="category-grid">
-    <!-- Women -->
-    <div>
-      <div class="category-title-col">WOMEN</div>
-      <div class="category-list">
-        <div class="category-item"><span class="category-label">Shirts and Blouses</span></div>
-        <div class="category-item"><span class="category-label">Bottoms</span></div>
-        <div class="category-item"><span class="category-label">Outerwear</span></div>
-        <div class="category-item"><span class="category-label">Accessories</span></div>
-      </div>
+    <% if (typeof searchQuery !== 'undefined' && searchQuery.trim() !== '') { %>
+        <div class="container mt-4 mb-5">
+            <h4>Showing results for "<%= searchQuery %>"</h4>
+            <div class="search-results">
+                <% if (products.length === 0) { %>
+                    <div class="alert alert-warning mt-2">No results found for "<%= searchQuery %>"</div>
+                <% } else { %>
+                    <div class="row mt-4">
+                        <% products.forEach(function(product) { %>
+                            <div class="col-md-4 mb-3">
+                                <a href="/product/<%= product.productId %>" class="product-link">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><%= product.productName %></h5>
+                                            <p class="card-text">Price: $<%= product.price %></p>
+                                            <% if (product.image) { %>
+                                                <img src="/uploads/<%= product.image %>" class="img-fluid rounded"
+                                                    alt="<%= product.productName %>"
+                                                    style="max-height: 150px; object-fit: cover; width: 100%; margin-top: 10px;">
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        <% }) %>
+                    </div> <% } %> </div> </div> <% } %> <div class="category-grid">
+        <div>
+            <div class="category-title-col">WOMEN</div>
+            <div class="category-list">
+                <div class="category-item"><span class="category-label">Shirts and Blouses</span></div>
+                <div class="category-item"><span class="category-label">Bottoms</span></div>
+                <div class="category-item"><span class="category-label">Outerwear</span></div>
+                <div class="category-item"><span class="category-label">Accessories</span></div>
+            </div>
+        </div>
+        <div>
+            <div class="category-title-col">MEN</div>
+            <div class="category-list">
+                <div class="category-item"><span>Shirts and Polos</span></div>
+                <div class="category-item"><span class="category-label">Pants and Shorts</span></div>
+                <div class="category-item"><span class="category-label">Jackets and Hoodies</span></div>
+            </div>
+        </div>
+        <div>
+            <div class="category-title-col">BABY</div>
+            <div class="category-list">
+                <div class="category-item"><span class="category-label">Baby Onesies</span></div>
+                <div class="category-item"><span class="category-label">Baby Pants</span></div>
+                <div class="category-item"><span class="category-label">Baby Jackets</span></div>
+                <div class="category-item"><span class="category-label">Baby Accessories</span></div>
+            </div>
+        </div>
+        <div>
+            <div class="category-title-col">KIDS</div>
+            <div class="category-list">
+                <div class="category-item"><span class="category-label">Kids Tops</span></div>
+                <div class="category-item"><span class="category-label">Kids Bottoms</span></div>
+                <div class="category-item"><span class="category-label">Kids Outerwear</span></div>
+                <div class="category-item"><span class="category-label">Kids Accessories</span></div>
+            </div>
+        </div>
     </div>
-    <!-- Men -->
-    <div>
-      <div class="category-title-col">MEN</div>
-      <div class="category-list">
-        <div class="category-item"><span>Shirts and Polos</span></div>
-        <div class="category-item"><span class="category-label">Pants and Shorts</span></div>
-        <div class="category-item"><span class="category-label">Jackets and Hoodies</span></div>
-      </div>
-    </div>
-    <!-- Kids (if you want to hide, remove this block) -->
-    <!--
-    <div>
-      <div class="category-title-col">KIDS</div>
-      <div class="category-list">
-        ...
-      </div>
-    </div>
-    -->
-    <!-- Baby -->
-    <div>
-      <div class="category-title-col">BABY</div>
-      <div class="category-list">
-        <div class="category-item"><span class="category-label">Baby Onesies</span></div>
-        <div class="category-item"><span class="category-label">Baby Pants</span></div>
-        <div class="category-item"><span class="category-label">Baby Jackets</span></div>
-        <div class="category-item"><span class="category-label">Baby Accessories</span></div>
-      </div>
-    </div>
-    <!-- Others -->
-    <div>
-      <div class="category-title-col">KIDS</div>
-      <div class="category-list">
-        <div class="category-item"><span class="category-label">Kids Tops</span></div>
-        <div class="category-item"><span class="category-label">Kids Bottoms</span></div>
-        <div class="category-item"><span class="category-label">Kids Outerwear</span></div>
-        <div class="category-item"><span class="category-label">Kids Accessories</span></div>
-      </div>
-    </div>
-  </div>
-  <section class="info-section">
-    <div class="container">
-      <h2>Information</h2>
-      <p>
-        <a href="#">Pick up your Click and Collect Order from 25 July - 10 Aug and receive a $6 voucher off $60 to spend in store. T&amp;C applies*</a>
-      </p>
-    </div>
-  </section>
-  <section class="from-section">
-    <div class="container">
-      <h2>From Seam & Soul.</h2>
-      <!-- Placeholder for news, images, banners, etc. -->
-    </div>
-  </section>
+    <section class="info-section">
+        <div class="container">
+            <h2>Information</h2>
+            <p>
+                <a href="#">Pick up your Click and Collect Order from 25 July - 10 Aug and receive a $6 voucher off $60 to spend in store. T&amp;C applies*</a>
+            </p>
+        </div>
+    </section>
+    <section class="from-section">
+        <div class="container">
+            <h2>From Seam & Soul.</h2>
+            </div>
+    </section>
 </body>
 </html>

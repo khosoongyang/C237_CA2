@@ -63,6 +63,10 @@
         </select>
       </div>
 
+      <div class="mb-3">
+        <label class="form-label">Type</label>
+        <input type="text" class="form-control" name="type" value="<%= product.type %>" required>
+      </div>
 
       <div class="mb-3">
         <label class="form-label">Quantity</label>
@@ -95,10 +99,9 @@
       </div>
 
       <button type="submit" class="btn btn-primary">Update Product</button>
-      
-
-      <a href="/category/<%= product.category %>" class="back-link">← Back</a>
     </form>
+
+    <a href="/category/<%= product.category %>" class="back-link">← Back</a>
   </div>
 </body>
 </html>

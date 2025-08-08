@@ -1,327 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Seam & Soul</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: #18191a;
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
-    }
-    body {
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-    .main-navbar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 68px;
-      background: transparent !important;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2vw;
-      z-index: 20;
-      pointer-events: none;
-    }
-    .navbar-left {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      height: 100%;
-    }
-    .navbar-company {
-      font-size: 1.7rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: #fff;
-      text-shadow: 0 0 8px rgba(0,0,0,0.12);
-      margin-right: 18px;
-      font-family: 'Poppins', sans-serif;
-      text-decoration: none;
-      line-height: 1;
-      padding: 0 6px;
-      background: rgba(0,0,0,0.13);
-      border-radius: 7px;
-    }
-    .nav-center {
-      pointer-events: auto;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-    }
-    .nav-center .nav-link {
-      font-size: 1.13rem;
-      font-weight: 500;
-      color: #fff;
-      opacity: 0.9;
-      border-bottom: 2px solid transparent;
-      transition: border 0.2s, color 0.2s, transform 0.15s;
-      padding: 3px 0 1px 0;
-      text-decoration: none;
-      background: transparent;
-      transform: scale(1);
-    }
-    .nav-center .nav-link.active {
-      color: #fff;
-      border-bottom: 2px solid transparent;
-    }
-    .nav-center .nav-link:hover, .nav-center .nav-link:focus {
-      color: #fff;
-      border-bottom: 2.5px solid #fff;
-      opacity: 1;
-      transform: scale(1.15);
-      z-index: 2;
-    }
-    .nav-icons {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .nav-icons .icon-btn {
-      background: rgba(255,255,255,0.08);
-      border: none;
-      color: #fff;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background 0.2s ease, transform 0.18s, box-shadow 0.18s;
-      font-size: 1.3rem;
-      pointer-events: auto;
-      transform: scale(1);
-      text-decoration: none;
-      border-bottom: 2px solid transparent; /* remove underline by default */
-    }
-    .nav-icons .icon-btn:focus {
-      outline: none;
-    }
-    .nav-icons .icon-btn:hover, .nav-icons .icon-btn:focus {
-      background: rgba(255,255,255,0.15);
-      transform: scale(1.16);
-      border-bottom: 2.5px solid #fff;
-      box-shadow: 0 2px 8px #00bcd4a0;
-      text-decoration: none;
-    }
-    .swiper {
-      width: 100vw;
-      height: 100vh;
-      max-height: 100vh;
-      margin: 0 auto;
-      border-radius: 0;
-      overflow: hidden;
-      background: #222;
-      position: relative;
-      z-index: 1;
-    }
-    .swiper-slide {
-      position: relative;
-      display: flex;
-      align-items: flex-end;
-      min-height: 380px;
-      justify-content: flex-start;
-    }
-    .slide-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-      filter: brightness(0.84);
-    }
-    .slide-content {
-      position: relative;
-      z-index: 2;
-      color: #fff;
-      padding: 2.4rem 2.5rem 3.1rem 2.5rem;
-      max-width: 38rem;
-      background: rgba(0,0,0,0.24);
-      border-radius: 20px;
-      margin: 3rem;
-      box-shadow: 0 10px 36px rgba(0,0,0,0.14);
-      margin-bottom: 12rem;
-    }
-    .slide-title {
-      font-size: 2.2rem;
-      font-weight: 600;
-      margin-bottom: 0.6rem;
-    }
-    .slide-desc {
-      font-size: 1.13rem;
-      margin-bottom: 1.1rem;
-    }
-    .slide-price {
-      font-size: 1.75rem;
-      font-weight: bold;
-      color: #00e6b8;
-    }
-    .swiper-pagination-bullet {
-      background: #fff;
-      opacity: 0.6;
-    }
-    .swiper-pagination-bullet-active {
-      background: #00bcd4;
-      opacity: 1;
-    }
-    .main-buttons-bar {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      z-index: 10;
-      pointer-events: none;
-    }
-    .circle-btn {
-      background: rgba(255,255,255,0.13);
-      border: none;
-      border-radius: 50%;
-      width: 62px;
-      height: 62px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 2rem;
-      box-shadow: 0 2px 7px rgba(0,0,0,.14);
-      transition: background .2s, box-shadow .2s, transform 0.16s, border-bottom 0.18s;
-      pointer-events: auto;
-      backdrop-filter: blur(2px);
-      transform: scale(1);
-      text-decoration: none;
-      border-bottom: 2px solid transparent; /* remove underline by default */
-    }
-    .circle-btn:focus {
-      outline: none;
-    }
-    .circle-btn:hover, .circle-btn:focus {
-      background: #00bcd4;
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(0,188,212,.13);
-      transform: scale(1.13);
-      border-bottom: 2.5px solid #fff;
-      text-decoration: none;
-    }
-    @media (max-width: 991px) {
-      .swiper { height: 100vh; }
-      .slide-content { margin: 1.5rem; padding: 1rem 1.2rem 1.5rem 1.2rem; margin-bottom: 9rem;}
-      .main-buttons-bar { gap: 1rem; }
-      .circle-btn { width: 50px; height: 50px; font-size: 1.5rem; }
-    }
-    @media (max-width: 600px) {
-      .swiper { height: 100vh; }
-      .main-buttons-bar { gap: 0.5rem; bottom: 18px; }
-      .slide-content { margin: 0.5rem; padding: 0.7rem 0.8rem 1.1rem 0.8rem; margin-bottom: 7.2rem;}
-      .circle-btn { width: 42px; height: 42px; font-size: 1.1rem; }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Seam & Soul</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Body and HTML Styling */
+        html, body {
+            height: 100%; /* Ensure html and body take full viewport height */
+            margin: 0;
+            padding: 0;
+            background: #18191a; /* Dark background color */
+            color: #fff; /* White text color */
+            font-family: 'Poppins', sans-serif; /* Global font setting */
+        }
+        body {
+            min-height: 100vh; /* Minimum height for body */
+            position: relative; /* Needed for absolute positioning of children */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Main Navigation Bar Styling */
+        .main-navbar {
+            position: absolute; /* Positioned over the carousel */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Full viewport width */
+            height: 68px; /* Fixed height for the navbar */
+            background: transparent !important; /* Transparent background */
+            display: flex; /* Flexbox for alignment of items */
+            align-items: center; /* Vertically center items */
+            justify-content: space-between; /* Space out left, center, and right sections */
+            padding: 0 2vw; /* Horizontal padding */
+            z-index: 20; /* High z-index to be on top */
+            pointer-events: none; /* Allows clicks to pass through to elements below by default */
+        }
+
+        /* Left section of the navigation bar (company logo/name) */
+        .navbar-left {
+            pointer-events: auto; /* Re-enable pointer events for interactive elements within */
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* Company name/logo styling in the navigation bar */
+        .navbar-company {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(0,0,0,0.12); /* Subtle text shadow for readability */
+            margin-right: 18px;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none; /* Remove underline from link */
+            line-height: 1;
+            padding: 0 6px;
+            background: rgba(0,0,0,0.13); /* Slightly transparent background for company name */
+            border-radius: 7px;
+        }
+
+        /* Center navigation links section */
+        .nav-center {
+            pointer-events: auto; /* Re-enable pointer events */
+            flex: 1; /* Allows it to take up available space */
+            display: flex;
+            justify-content: center; /* Center align navigation links */
+            align-items: center;
+            gap: 40px; /* Space between navigation links */
+        }
+
+        /* Individual navigation link styling */
+        .nav-center .nav-link {
+            font-size: 1.13rem;
+            font-weight: 500;
+            color: #fff;
+            opacity: 0.9;
+            border-bottom: 2px solid transparent; /* Transparent border for hover effect */
+            transition: border 0.2s, color 0.2s, transform 0.15s; /* Smooth transitions for interactive effects */
+            padding: 3px 0 1px 0;
+            text-decoration: none;
+            background: transparent;
+            transform: scale(1); /* Initial scale for hover effect */
+        }
+
+        /* Active navigation link styling */
+        .nav-center .nav-link.active {
+            color: #fff;
+            border-bottom: 2px solid transparent; /* No visible border for active state in this design */
+        }
+
+        /* Hover and focus states for navigation links */
+        .nav-center .nav-link:hover, .nav-center .nav-link:focus {
+            color: #fff;
+            border-bottom: 2.5px solid #fff; /* White border on hover/focus */
+            opacity: 1;
+            transform: scale(1.15); /* Slightly enlarge on hover */
+            z-index: 2; /* Bring to front on hover */
+        }
+
+        /* Right section of the navigation bar (icons) */
+        .nav-icons {
+            pointer-events: auto; /* Re-enable pointer events */
+            display: flex;
+            align-items: center;
+            gap: 16px; /* Space between icons */
+        }
+
+        /* Styling for icon buttons in the navigation bar */
+        .nav-icons .icon-btn {
+            background: rgba(255,255,255,0.08); /* Slightly transparent white background */
+            border: none;
+            color: #fff;
+            border-radius: 50%; /* Make them circular */
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s ease, transform 0.18s, box-shadow 0.18s; /* Smooth transitions */
+            font-size: 1.3rem;
+            pointer-events: auto;
+            transform: scale(1);
+            text-decoration: none;
+            border-bottom: 2px solid transparent; /* Remove default underline */
+        }
+
+        /* Remove outline on focus for accessibility (better to provide visual feedback otherwise) */
+        .nav-icons .icon-btn:focus {
+            outline: none;
+        }
+
+        /* Hover and focus states for icon buttons */
+        .nav-icons .icon-btn:hover, .nav-icons .icon-btn:focus {
+            background: rgba(255,255,255,0.15); /* More opaque background on hover */
+            transform: scale(1.16); /* Enlarge on hover */
+            border-bottom: 2.5px solid #fff; /* White border on hover/focus */
+            box-shadow: 0 2px 8px #00bcd4a0; /* Subtle shadow on hover */
+            text-decoration: none;
+        }
+
+        /* Swiper Carousel Container Styling */
+        .swiper {
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
+            max-height: 100vh;
+            margin: 0 auto;
+            border-radius: 0;
+            overflow: hidden;
+            background: #222; /* Dark background for the swiper */
+            position: relative;
+            z-index: 1; /* Below the navigation bar */
+        }
+
+        /* Individual Swiper Slide Styling */
+        .swiper-slide {
+            position: relative;
+            display: flex;
+            align-items: flex-end; /* Align content to the bottom */
+            min-height: 380px;
+            justify-content: flex-start; /* Align content to the left */
+        }
+
+        /* Background image for each slide */
+        .slide-bg {
+            position: absolute;
+            inset: 0; /* Cover the entire slide */
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure image covers the area */
+            z-index: 1; /* Below the content overlay */
+            filter: brightness(0.84); /* Slightly dim the background image */
+        }
+
+        /* Content container within each slide (product info) */
+        .slide-content {
+            position: relative;
+            z-index: 2; /* Above the background image */
+            color: #fff;
+            padding: 2.4rem 2.5rem 3.1rem 2.5rem;
+            max-width: 38rem; /* Limit content width */
+            background: rgba(0,0,0,0.24); /* Transparent black background for content */
+            border-radius: 20px;
+            margin: 3rem; /* Margin around the content box */
+            box-shadow: 0 10px 36px rgba(0,0,0,0.14); /* Shadow for depth */
+            margin-bottom: 12rem; /* Pushes content up from the bottom for buttons bar */
+        }
+
+        /* Styling for the product title */
+        .slide-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Styling for the product description */
+        .slide-desc {
+            font-size: 1.13rem;
+            margin-bottom: 1.1rem;
+        }
+
+        /* Styling for the product price */
+        .slide-price {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #00e6b8; /* Highlight color for price */
+        }
+
+        /* Swiper pagination bullet styling */
+        .swiper-pagination-bullet {
+            background: #fff; /* White color for inactive bullets */
+            opacity: 0.6;
+        }
+
+        /* Active Swiper pagination bullet styling */
+        .swiper-pagination-bullet-active {
+            background: #00bcd4; /* Cyan color for active bullet */
+            opacity: 1;
+        }
+
+        /* Main fixed buttons bar at the bottom */
+        .main-buttons-bar {
+            position: absolute; /* Positioned over the carousel */
+            left: 0;
+            right: 0;
+            bottom: 50px; /* Distance from the bottom */
+            display: flex;
+            justify-content: center; /* Center align buttons */
+            align-items: center;
+            gap: 30px; /* Space between buttons */
+            z-index: 10; /* Above the swiper, below the navbar */
+            pointer-events: none; /* Allows clicks to pass through by default */
+        }
+
+        /* Styling for circular buttons in the main buttons bar */
+        .circle-btn {
+            background: rgba(255,255,255,0.13); /* Slightly transparent background */
+            border: none;
+            border-radius: 50%; /* Make them circular */
+            width: 62px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2rem;
+            box-shadow: 0 2px 7px rgba(0,0,0,.14);
+            transition: background .2s, box-shadow .2s, transform 0.16s, border-bottom 0.18s; /* Smooth transitions */
+            pointer-events: auto; /* Re-enable pointer events */
+            backdrop-filter: blur(2px); /* Blur effect for transparency */
+            transform: scale(1);
+            text-decoration: none;
+            border-bottom: 2px solid transparent; /* Remove default underline */
+        }
+
+        /* Remove outline on focus for accessibility */
+        .circle-btn:focus {
+            outline: none;
+        }
+
+        /* Hover and focus states for circular buttons */
+        .circle-btn:hover, .circle-btn:focus {
+            background: #00bcd4; /* Cyan background on hover */
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0,188,212,.13); /* Stronger shadow on hover */
+            transform: scale(1.13); /* Enlarge on hover */
+            border-bottom: 2.5px solid #fff; /* White border on hover/focus */
+            text-decoration: none;
+        }
+
+        /* Media Queries for Responsive Design */
+
+        /* Styles for screens smaller than 991px (e.g., tablets) */
+        @media (max-width: 991px) {
+            .swiper { height: 100vh; } /* Ensure swiper takes full height */
+            .slide-content { margin: 1.5rem; padding: 1rem 1.2rem 1.5rem 1.2rem; margin-bottom: 9rem;} /* Adjust content padding and margin */
+            .main-buttons-bar { gap: 1rem; } /* Reduce gap between buttons */
+            .circle-btn { width: 50px; height: 50px; font-size: 1.5rem; } /* Reduce button size */
+        }
+
+        /* Styles for screens smaller than 600px (e.g., mobile phones) */
+        @media (max-width: 600px) {
+            .swiper { height: 100vh; }
+            .main-buttons-bar { gap: 0.5rem; bottom: 18px; } /* Further reduce gap and move buttons closer to bottom */
+            .slide-content { margin: 0.5rem; padding: 0.7rem 0.8rem 1.1rem 0.8rem; margin-bottom: 7.2rem;} /* Further adjust content padding and margin */
+            .circle-btn { width: 42px; height: 42px; font-size: 1.1rem; } /* Further reduce button size */
+        }
+    </style>
 </head>
 <body>
-  <!-- Transparent overlay navigation bar (absolute) -->
-  <nav class="main-navbar">
-    <div class="navbar-left">
-      <a class="navbar-company" href="/">Seam &amp; Soul</a>
-    </div>
-    <div class="nav-center">
-      <a class="nav-link" href="/women">WOMEN</a>
-      <a class="nav-link" href="/men">MEN</a>
-      <a class="nav-link" href="/kids">KIDS</a>
-      <a class="nav-link" href="/baby">BABY</a>
-    </div>
-    <div class="nav-icons">
-      <form action="/language" method="post" style="display:inline;">
-        <button class="icon-btn" type="submit" name="lang" value="en" title="Language" aria-label="Language">🌐</button>
-      </form>
-      <a class="icon-btn" href="/favorites" title="Favorites" aria-label="Favorites">❤️</a>
-      <a class="icon-btn" href="/cart" title="Cart" aria-label="Cart">🛒</a>
-    </div>
-  </nav>
-
-  <!-- Swiper vertical carousel with overlayed product info, takes whole screen -->
-  <div class="swiper mySwiper mb-0">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <img class="slide-bg" src="https://www.gap.com/webcontent/0059/464/182/cn59464182.jpg" alt="Cotton Easy Shorts">
-        <div class="slide-content">
-          <div class="slide-title">Cotton Easy Shorts</div>
-          <div class="slide-desc">100% cotton with comfortable elastic waist.</div>
-          <div class="slide-price">$19.90</div>
+    <nav class="main-navbar">
+        <div class="navbar-left">
+            <a class="navbar-company" href="/">Seam &amp; Soul</a>
         </div>
-      </div>
-      <div class="swiper-slide">
-        <img class="slide-bg" src="https://www.gapcanada.ca/webcontent/0057/323/582/cn57323582.jpg" alt="Airy Linen Shirt">
-        <div class="slide-content">
-          <div class="slide-title">Airy Linen Shirt</div>
-          <div class="slide-desc">Lightweight, breathable linen perfect for summer layering. Available in multiple colors.</div>
-          <div class="slide-price">$39.90</div>
+        <div class="nav-center">
+            <a class="nav-link" href="/women">WOMEN</a>
+            <a class="nav-link" href="/men">MEN</a>
+            <a class="nav-link" href="/kids">KIDS</a>
+            <a class="nav-link" href="/baby">BABY</a>
         </div>
-      </div>
-      <div class="swiper-slide">
-        <img class="slide-bg" src="https://i.ebayimg.com/images/g/3GMAAOSw5s1iDquy/s-l1200.jpg" alt="Utility Jacket">
-        <div class="slide-content">
-          <div class="slide-title">Utility Jacket</div>
-          <div class="slide-desc">Modern utility jacket with multiple pockets and a relaxed fit. Durable, stylish, and functional.</div>
-          <div class="slide-price">$89.90</div>
+        <div class="nav-icons">
+            <form action="/language" method="post" style="display:inline;">
+                <button class="icon-btn" type="submit" name="lang" value="en" title="Language" aria-label="Language">🌐</button>
+            </form>
+            <a class="icon-btn" href="/favorites" title="Favorites" aria-label="Favorites">❤️</a>
+            <a class="icon-btn" href="/cart" title="Cart" aria-label="Cart">🛒</a>
         </div>
-      </div>
-    </div>
-    <div class="swiper-pagination"></div>
-    <!-- Overlay fixed round buttons at bottom center -->
-    <div class="main-buttons-bar">
-      <a class="circle-btn" href="/" title="Home" aria-label="Home">🏠</a>
-      <a class="circle-btn" href="/search" title="Search" aria-label="Search">🔍</a>
-      <a class="circle-btn" href="/user" title="User" aria-label="User">👤</a>
-      <% if (user && user.role && (user.role.toLowerCase() === 'admin' || user.role.toLowerCase() === 'seller')) { %>
-        <a class="circle-btn" href="/sell" title="Sell" aria-label="Sell">💰</a>
-      <% } %>
-    </div>
-  </div>
+    </nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    new Swiper('.mySwiper', {
-      direction: 'vertical',
-      slidesPerView: 1,
-      spaceBetween: 0,
-      mousewheel: true,
-      pagination: { el: '.swiper-pagination', clickable: true },
-      keyboard: { enabled: true },
-      loop: true
-    });
+    <div class="swiper mySwiper mb-0">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img class="slide-bg" src="https://www.gap.com/webcontent/0059/464/182/cn59464182.jpg" alt="Cotton Easy Shorts">
+                <div class="slide-content">
+                    <div class="slide-title">Cotton Easy Shorts</div>
+                    <div class="slide-desc">100% cotton with comfortable elastic waist.</div>
+                    <div class="slide-price">$19.90</div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <img class="slide-bg" src="https://www.gapcanada.ca/webcontent/0057/323/582/cn57323582.jpg" alt="Airy Linen Shirt">
+                <div class="slide-content">
+                    <div class="slide-title">Airy Linen Shirt</div>
+                    <div class="slide-desc">Lightweight, breathable linen perfect for summer layering. Available in multiple colors.</div>
+                    <div class="slide-price">$39.90</div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <img class="slide-bg" src="https://i.ebayimg.com/images/g/3GMAAOSw5s1iDquy/s-l1200.jpg" alt="Utility Jacket">
+                <div class="slide-content">
+                    <div class="slide-title">Utility Jacket</div>
+                    <div class="slide-desc">Modern utility jacket with multiple pockets and a relaxed fit. Durable, stylish, and functional.</div>
+                    <div class="slide-price">$89.90</div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="main-buttons-bar">
+            <a class="circle-btn" href="/" title="Home" aria-label="Home">🏠</a>
+            <a class="circle-btn" href="/search" title="Search" aria-label="Search">🔍</a>
+            <a class="circle-btn" href="/user" title="User" aria-label="User">👤</a>
+            <% if (user && user.role && (user.role.toLowerCase() === 'admin' || user.role.toLowerCase() === 'seller')) { %>
+                <a class="circle-btn" href="/sell" title="Sell" aria-label="Sell">💰</a>
+            <% } %>
+        </div>
+    </div>
 
-    // Navigation bar button interactivity
-    document.querySelectorAll('.nav-center .nav-link').forEach(link => {
-      link.addEventListener('mouseenter', function() {
-        this.classList.add('hovered');
-      });
-      link.addEventListener('mouseleave', function() {
-        this.classList.remove('hovered');
-      });
-      link.addEventListener('click', function() {
-        document.querySelectorAll('.nav-center .nav-link').forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-  </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        // Initialize Swiper carousel
+        new Swiper('.mySwiper', {
+            direction: 'vertical', /* Vertical scrolling */
+            slidesPerView: 1, /* Display one slide at a time */
+            spaceBetween: 0, /* No space between slides */
+            mousewheel: true, /* Enable mousewheel navigation */
+            pagination: { el: '.swiper-pagination', clickable: true }, /* Enable pagination bullets */
+            keyboard: { enabled: true }, /* Enable keyboard navigation */
+            loop: true /* Loop through slides continuously */
+        });
+
+        // Navigation bar button interactivity
+        document.querySelectorAll('.nav-center .nav-link').forEach(link => {
+            // Add 'hovered' class on mouse enter for hover effects (though CSS handles most)
+            link.addEventListener('mouseenter', function() {
+                this.classList.add('hovered');
+            });
+            // Remove 'hovered' class on mouse leave
+            link.addEventListener('mouseleave', function() {
+                this.classList.remove('hovered');
+            });
+            // Handle 'active' class on click to highlight the current page/section
+            link.addEventListener('click', function() {
+                // Remove 'active' from all links first
+                document.querySelectorAll('.nav-center .nav-link').forEach(l => l.classList.remove('active'));
+                // Add 'active' to the clicked link
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
